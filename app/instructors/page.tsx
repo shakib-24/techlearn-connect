@@ -24,7 +24,7 @@ export default function InstructorsPage() {
             <span className="font-bold text-base">TechLearn Connect</span>
           </div>
           <Link
-            href="#"
+            href="/register"
             className="text-sm font-semibold text-white border border-white/30 px-4 py-1.5 rounded-lg hover:bg-white/10 transition-colors"
           >
             講師登録

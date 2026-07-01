@@ -44,7 +44,7 @@ export default function LPHeader() {
             講師を探す
           </Link>
           <Link
-            href="#"
+            href="/register"
             className="text-sm font-semibold text-white bg-[#3B82C4] px-4 py-2 rounded-lg hover:bg-[#1E3A5F] transition-colors"
           >
             講師登録
@@ -88,7 +88,7 @@ export default function LPHeader() {
               講師を探す
             </Link>
             <Link
-              href="#"
+              href="/register"
               onClick={() => setOpen(false)}
               className="text-sm font-semibold text-white bg-[#3B82C4] px-4 py-3 rounded-lg hover:bg-[#1E3A5F] transition-colors text-center"
             >

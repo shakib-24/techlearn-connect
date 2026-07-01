@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { instructors, type Instructor } from "@/data/instructors";
 import { useFavorites } from "@/hooks/useFavorites";
+import { useCustomInstructors } from "@/hooks/useCustomInstructors";
 import InstructorCard from "./InstructorCard";
 import { CATEGORY_AVATAR_COLOR } from "@/lib/categoryStyles";
 
@@ -18,15 +19,22 @@ const FORMATS: Instructor["format"][] = ["オンライン", "対面", "両方対
 
 export default function InstructorList() {
   const { favorites } = useFavorites();
+  const { customInstructors } = useCustomInstructors();
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<Instructor["category"] | "">("");
   const [format, setFormat] = useState<Instructor["format"] | "">("");
   const [favoritesOnly, setFavoritesOnly] = useState(false);
 
+  // Merge static + custom instructors (custom appear after static)
+  const allInstructors = useMemo(
+    () => [...instructors, ...customInstructors],
+    [customInstructors]
+  );
+
   // 全条件 AND 結合 — 単一の derived array
   const filteredInstructors = useMemo(() => {
     const q = query.toLowerCase().trim();
-    return instructors.filter((inst) => {
+    return allInstructors.filter((inst) => {
       if (q) {
         const hit =
           inst.name.toLowerCase().includes(q) ||
@@ -39,7 +47,7 @@ export default function InstructorList() {
       if (favoritesOnly && !favorites.includes(inst.id)) return false;
       return true;
     });
-  }, [query, category, format, favoritesOnly, favorites]);
+  }, [query, category, format, favoritesOnly, favorites, allInstructors]);
 
   const resetFilters = () => {
     setQuery("");
@@ -159,14 +167,14 @@ export default function InstructorList() {
       {/* 結果件数 + リセット */}
       <div className="flex items-center justify-between mb-4">
         <p className="text-sm text-[#64748B]">
-          {filteredInstructors.length === instructors.length ? (
-            <span>{instructors.length}名の講師</span>
+          {filteredInstructors.length === allInstructors.length ? (
+            <span>{allInstructors.length}名の講師</span>
           ) : (
             <span>
               <span className="font-semibold text-[#1E3A5F]">
                 {filteredInstructors.length}件
               </span>
-              <span> / {instructors.length}名</span>
+              <span> / {allInstructors.length}名</span>
             </span>
           )}
         </p>

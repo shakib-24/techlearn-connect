@@ -48,7 +48,7 @@ export default function LandingPage() {
               講師を探す →
             </Link>
             <Link
-              href="#"
+              href="/register"
               className="px-8 py-4 font-semibold rounded-xl text-base border border-white/30 bg-white/10 hover:bg-white/20 transition-colors"
             >
               講師として登録する
@@ -212,7 +212,7 @@ export default function LandingPage() {
               <Link href="/instructors" className="hover:text-white transition-colors">
                 講師を探す
               </Link>
-              <Link href="#" className="hover:text-white transition-colors">
+              <Link href="/register" className="hover:text-white transition-colors">
                 講師登録
               </Link>
               <Link href="#" className="hover:text-white transition-colors">

@@ -37,6 +37,11 @@ export default function InstructorCard({ instructor }: { instructor: Instructor 
               >
                 {instructor.category}
               </span>
+              {instructor.id.startsWith("custom-") && (
+                <span className="text-[10px] font-bold text-white px-1.5 py-0.5 rounded" style={{ backgroundColor: "#10B981" }}>
+                  NEW
+                </span>
+              )}
             </div>
             <p className="text-[#64748B] text-sm mt-1 line-clamp-2">
               {instructor.tagline}
