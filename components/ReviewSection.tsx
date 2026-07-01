@@ -4,7 +4,7 @@ import { useState } from "react";
 import type { Review } from "@/data/instructors";
 import { useReviews } from "@/hooks/useReviews";
 
-const REVIEWER_TYPES = ["企業研修担当者", "個人受講者", "国際学生"] as const;
+const REVIEWER_TYPES = ["企業研修担当者", "個人受講者", "国際学生", "その他"] as const;
 
 function Stars({ rating, interactive = false, onSelect }: {
   rating: number;
