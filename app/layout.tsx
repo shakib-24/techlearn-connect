@@ -6,8 +6,17 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "TechLearn Connect | 研修講師マッチングサービス",
-  description: "企業・個人とプロ講師をマッチングするWebサービス",
+  title: {
+    default: "TechLearn Connect | 研修講師マッチングサービス",
+    template: "%s | TechLearn Connect",
+  },
+  description:
+    "IT研修に特化したプロ講師マッチングサービス。フロントエンドからAI/MLまで、最適な講師を素早く検索・比較できます。",
+  openGraph: {
+    siteName: "TechLearn Connect",
+    locale: "ja_JP",
+    type: "website",
+  },
 };
 
 export default function RootLayout({

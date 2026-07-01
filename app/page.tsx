@@ -1,4 +1,12 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+import LPHeader from "@/components/LPHeader";
+
+export const metadata: Metadata = {
+  title: "TechLearn Connect | 研修講師マッチングサービス",
+  description:
+    "最適な研修講師がすぐ見つかる。IT研修に特化したプロ講師マッチングサービス。フロントエンド・Backend・AI/MLなど5カテゴリ対応。",
+};
 
 const STEPS = [
   { step: 1, icon: "🔍", title: "条件を入力", desc: "カテゴリ・対応形式・予算などの希望条件を指定してください" },
@@ -11,28 +19,7 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* ─── Header ─── */}
-      <header className="sticky top-0 z-50 bg-white border-b border-gray-100 shadow-sm">
-        <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div>
-            <span className="font-bold text-[#1E3A5F] text-lg">TechLearn Connect</span>
-            <span className="text-[#64748B] text-xs ml-2 hidden sm:inline">研修講師マッチング</span>
-          </div>
-          <nav className="flex items-center gap-3">
-            <Link
-              href="/instructors"
-              className="text-sm font-medium text-[#64748B] hover:text-[#1E3A5F] transition-colors"
-            >
-              講師を探す
-            </Link>
-            <Link
-              href="#"
-              className="text-sm font-semibold text-white bg-[#3B82C4] px-4 py-2 rounded-lg hover:bg-[#1E3A5F] transition-colors"
-            >
-              講師登録
-            </Link>
-          </nav>
-        </div>
-      </header>
+      <LPHeader />
 
       {/* ─── Hero ─── */}
       <section

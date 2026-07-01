@@ -1,5 +1,12 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import InstructorList from "@/components/InstructorList";
+
+export const metadata: Metadata = {
+  title: "講師を探す",
+  description:
+    "フロントエンド・Backend・Infrastructure・UI/UX Design・AI/Data Scienceなど5カテゴリのプロ講師を検索・比較。オンライン・対面・両方対応から選択可能。",
+};
 
 export default function InstructorsPage() {
   return (
