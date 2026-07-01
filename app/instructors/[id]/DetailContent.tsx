@@ -4,6 +4,7 @@ import Link from "next/link";
 import type { Instructor } from "@/data/instructors";
 import { useFavorites } from "@/hooks/useFavorites";
 import { CATEGORY_BADGE, CATEGORY_AVATAR_COLOR } from "@/lib/categoryStyles";
+import ContactForm from "@/components/ContactForm";
 
 export default function DetailContent({ instructor }: { instructor: Instructor }) {
   const { isFavorited, toggleFavorite } = useFavorites();
@@ -112,7 +113,7 @@ export default function DetailContent({ instructor }: { instructor: Instructor }
         </div>
 
         {/* カリキュラム */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
           <h2 className="font-bold text-[#1E3A5F] mb-3">カリキュラム</h2>
           <ol className="space-y-2">
             {instructor.curriculum.map((c, i) => (
@@ -125,6 +126,9 @@ export default function DetailContent({ instructor }: { instructor: Instructor }
             ))}
           </ol>
         </div>
+
+        {/* お問い合わせフォーム */}
+        <ContactForm instructorName={instructor.name} />
       </main>
     </div>
   );
