@@ -6,7 +6,7 @@ export default function Home() {
           Hello TechLearn Connect
         </h1>
         <p className="text-[#64748B] text-lg">
-          研修講師マッチングサービス — Phase 0 完了
+          研修講師マッチングサービス 
         </p>
       </div>
     </div>
