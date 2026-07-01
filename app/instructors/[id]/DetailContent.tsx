@@ -15,7 +15,7 @@ export default function DetailContent({ instructor }: { instructor: Instructor }
       <nav className="bg-[#1E3A5F] text-white px-6 py-4">
         <div className="max-w-3xl mx-auto flex items-center justify-between">
           <Link
-            href="/"
+            href="/instructors"
             className="flex items-center gap-2 text-blue-200 hover:text-white transition-colors text-sm"
           >
             ← 一覧に戻る
