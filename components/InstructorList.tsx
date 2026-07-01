@@ -77,10 +77,10 @@ export default function InstructorList() {
         <p className="text-xs text-[#64748B] font-medium mb-2 uppercase tracking-wide">
           カテゴリ
         </p>
-        <div className="flex gap-2 overflow-x-auto pb-1">
+        <div className="flex flex-wrap gap-2">
           <button
             onClick={() => setCategory("")}
-            className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors ${
+            className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors whitespace-normal text-center leading-tight ${
               category === ""
                 ? "bg-[#1E3A5F] text-white border-[#1E3A5F]"
                 : "bg-white text-[#64748B] border-gray-200 hover:border-[#3B82C4] hover:text-[#3B82C4]"
@@ -94,7 +94,7 @@ export default function InstructorList() {
               <button
                 key={cat}
                 onClick={() => setCategory(isActive ? "" : cat)}
-                className="flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all"
+                className="max-w-[5rem] px-3 py-1.5 rounded-full text-xs font-semibold border transition-all whitespace-normal text-center leading-tight"
                 style={
                   isActive
                     ? {
@@ -124,7 +124,7 @@ export default function InstructorList() {
         <div className="flex gap-2 flex-wrap">
           <button
             onClick={() => setFormat("")}
-            className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors ${
+            className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors whitespace-normal text-center leading-tight ${
               format === ""
                 ? "bg-[#1E3A5F] text-white border-[#1E3A5F]"
                 : "bg-white text-[#64748B] border-gray-200 hover:border-[#3B82C4] hover:text-[#3B82C4]"
@@ -138,7 +138,7 @@ export default function InstructorList() {
               <button
                 key={f}
                 onClick={() => setFormat(isActive ? "" : f)}
-                className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors ${
+                className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors whitespace-normal text-center leading-tight ${
                   isActive
                     ? "bg-[#3B82C4] text-white border-[#3B82C4]"
                     : "bg-white text-[#64748B] border-gray-200 hover:border-[#3B82C4] hover:text-[#3B82C4]"
