@@ -76,6 +76,11 @@ export default function ReviewSection({
   const [values, setValues] = useState<FormValues>(EMPTY);
   const [errors, setErrors] = useState<FormErrors>({});
   const [submitted, setSubmitted] = useState(false);
+  const [expanded, setExpanded] = useState(false);
+
+  const INITIAL_COUNT = 2;
+  const visibleReviews = expanded ? reviews : reviews.slice(0, INITIAL_COUNT);
+  const remaining = reviews.length - INITIAL_COUNT;
 
   const avgRating =
     reviews.length > 0
@@ -126,22 +131,33 @@ export default function ReviewSection({
       {reviews.length === 0 ? (
         <p className="text-[#64748B] text-sm mb-6">まだレビューがありません。最初の投稿者になりましょう。</p>
       ) : (
-        <ul className="space-y-4 mb-6">
-          {reviews.map((r) => (
-            <li key={r.id} className="border-b border-gray-100 pb-4 last:border-0 last:pb-0">
-              <div className="flex items-center justify-between mb-1.5">
-                <div className="flex items-center gap-2">
-                  <Stars rating={r.rating} />
-                  <span className="text-xs text-[#64748B] font-medium px-2 py-0.5 bg-[#F1F5F9] rounded-full">
-                    {r.reviewerType}
-                  </span>
+        <div className="mb-6">
+          <ul className="space-y-4">
+            {visibleReviews.map((r) => (
+              <li key={r.id} className="border-b border-gray-100 pb-4 last:border-0 last:pb-0">
+                <div className="flex items-center justify-between mb-1.5">
+                  <div className="flex items-center gap-2">
+                    <Stars rating={r.rating} />
+                    <span className="text-xs text-[#64748B] font-medium px-2 py-0.5 bg-[#F1F5F9] rounded-full">
+                      {r.reviewerType}
+                    </span>
+                  </div>
+                  <span className="text-xs text-[#64748B]">{r.date}</span>
                 </div>
-                <span className="text-xs text-[#64748B]">{r.date}</span>
-              </div>
-              <p className="text-sm text-[#64748B] leading-relaxed">{r.comment}</p>
-            </li>
-          ))}
-        </ul>
+                <p className="text-sm text-[#64748B] leading-relaxed">{r.comment}</p>
+              </li>
+            ))}
+          </ul>
+          {reviews.length > INITIAL_COUNT && (
+            <button
+              type="button"
+              onClick={() => setExpanded((v) => !v)}
+              className="mt-4 text-sm font-medium text-[#3B82C4] hover:text-[#1E3A5F] transition-colors"
+            >
+              {expanded ? "閉じる" : `もっと見る（あと${remaining}件）`}
+            </button>
+          )}
+        </div>
       )}
 
       {/* 投稿フォーム */}
