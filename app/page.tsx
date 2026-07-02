@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
-import { Laptop, Layers, Users } from "lucide-react";
+import { Languages, Star, Users } from "lucide-react";
 import FAQSection from "@/components/FAQSection";
-import InstructorAvatar from "@/components/InstructorAvatar";
 import LPHeader from "@/components/LPHeader";
 import { instructors } from "@/data/instructors";
-import { CATEGORY_BADGE, CATEGORY_ICON } from "@/lib/categoryStyles";
 
 export const metadata: Metadata = {
   title: "TechLearn Connect | 研修講師マッチングサービス",
@@ -20,19 +19,37 @@ const STEPS = [
   { step: 4, icon: "🚀", title: "研修スタート", desc: "合意が取れたらいよいよ研修開始。効果的な学びを提供" },
 ];
 
-// Hero装飾用のおすすめ講師カード。マッチング/レコメンドロジックではなく固定表示。
-const FEATURED_INSTRUCTOR = instructors[0];
-const FEATURED_REVIEWS = FEATURED_INSTRUCTOR.reviews ?? [];
-const FEATURED_RATING =
-  FEATURED_REVIEWS.length > 0
-    ? Math.round((FEATURED_REVIEWS.reduce((sum, r) => sum + r.rating, 0) / FEATURED_REVIEWS.length) * 10) / 10
+// トラストバッジ用の集計値。既存データから動的に算出し、実データと矛盾しないようにする。
+const INSTRUCTOR_COUNT = instructors.length;
+const CATEGORY_COUNT = new Set(instructors.map((i) => i.category)).size;
+const ALL_REVIEWS = instructors.flatMap((i) => i.reviews ?? []);
+const AVG_RATING =
+  ALL_REVIEWS.length > 0
+    ? Math.round((ALL_REVIEWS.reduce((sum, r) => sum + r.rating, 0) / ALL_REVIEWS.length) * 10) / 10
     : 0;
-const FeaturedCategoryIcon = CATEGORY_ICON[FEATURED_INSTRUCTOR.category];
 
-const HERO_STATS = [
-  { icon: Users, label: "7名の講師" },
-  { icon: Layers, label: "5つの専門分野" },
-  { icon: Laptop, label: "オンライン・対面・両方対応" },
+const TRUST_BADGES = [
+  {
+    icon: Users,
+    title: "登録講師",
+    value: `${INSTRUCTOR_COUNT}名 / ${CATEGORY_COUNT}分野`,
+  },
+  {
+    icon: Languages,
+    title: "対応言語",
+    value: "日本語・英語・やさしい日本語",
+  },
+  {
+    icon: Star,
+    title: "平均満足度",
+    value: `★ ${AVG_RATING} / 5.0`,
+  },
+];
+
+const QUICK_NAV = [
+  { href: "/#service", label: "なぜ選ばれるのか" },
+  { href: "/#flow", label: "ご利用の流れ" },
+  { href: "/#faq", label: "よくある質問" },
 ];
 
 export default function LandingPage() {
@@ -42,114 +59,103 @@ export default function LandingPage() {
       <LPHeader />
 
       {/* ─── Hero ─── */}
-      <section
-        className="text-white py-20 px-6 overflow-hidden"
-        style={{ background: "linear-gradient(135deg, #1E3A5F 0%, #3B82C4 100%)" }}
-      >
-        <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-          {/* Left: copy */}
-          <div className="text-center lg:text-left">
-            <p className="text-blue-300 text-xs font-semibold uppercase tracking-widest mb-5">
-              IT研修講師マッチングサービス
-            </p>
-            <h1 className="text-4xl sm:text-5xl font-bold leading-tight mb-6">
-              最適な研修講師が、
-              <br className="hidden sm:block" />
-              すぐ見つかる
-            </h1>
-            <p className="text-blue-100 text-lg leading-relaxed mb-10 max-w-xl mx-auto lg:mx-0">
-              フロントエンドから AI / ML まで、IT 研修に特化したプロ講師を素早く検索・比較。
-              貴社のニーズにぴったりの講師を見つけましょう。
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-              <Link
-                href="/instructors"
-                className="px-8 py-4 font-bold rounded-xl text-base shadow-lg transition-colors"
-                style={{ backgroundColor: "#10B981", color: "white" }}
-              >
-                講師を探す →
-              </Link>
-              <Link
-                href="/register"
-                className="px-8 py-4 font-semibold rounded-xl text-base border border-white/30 bg-white/10 hover:bg-white/20 transition-colors"
-              >
-                講師として登録する
-              </Link>
-            </div>
-          </div>
+      <section className="relative w-full h-[500px] sm:h-[600px] overflow-hidden">
+        <Image
+          src="/hero.png"
+          alt="講師が受講者にオンラインでIT研修を行っている様子"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover"
+        />
+        {/* グラデーションオーバーレイ（左が濃い紺色、右にいくほど透明） */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(to right, rgba(30,58,95,0.95) 0%, rgba(30,58,95,0.75) 45%, rgba(30,58,95,0.25) 75%, rgba(30,58,95,0.05) 100%)",
+          }}
+        />
+        {/* モバイル用: 画像全体を覆う濃いオーバーレイ（可読性確保） */}
+        <div className="absolute inset-0 sm:hidden" style={{ backgroundColor: "rgba(30,58,95,0.55)" }} />
 
-          {/* Right: おすすめ講師カード（装飾用の固定表示） + 統計バッジ */}
-          <div className="flex justify-center lg:justify-end">
-            <div className="relative w-full max-w-xl pb-10 lg:pb-8">
-              <div className="bg-white rounded-3xl shadow-2xl p-8 sm:p-10 text-left">
-                <p
-                  className="text-sm font-semibold uppercase tracking-widest mb-6"
-                  style={{ color: "#3B82C4" }}
+        {/* テキスト（画像の上に重ねて配置） */}
+        <div className="absolute inset-0 flex items-center">
+          <div className="max-w-6xl mx-auto px-6 w-full">
+            <div className="max-w-[500px] text-left">
+              <p className="text-xs font-semibold uppercase tracking-widest mb-5 text-blue-200">
+                IT研修講師マッチングサービス
+              </p>
+              <h1 className="leading-tight mb-6">
+                <span
+                  className="inline-block px-4 py-2 rounded-lg text-3xl sm:text-4xl font-extrabold text-white"
+                  style={{ backgroundColor: "#1E3A5F" }}
                 >
-                  おすすめ講師
-                </p>
-                <div className="flex items-center gap-4 sm:gap-6 mb-6">
-                  <InstructorAvatar
-                    instructor={FEATURED_INSTRUCTOR}
-                    size={120}
-                    textSizeClass="text-4xl"
-                  />
-                  <div>
-                    <p className="font-extrabold text-[#1E3A5F] text-2xl sm:text-3xl leading-tight">
-                      {FEATURED_INSTRUCTOR.name}
-                    </p>
-                    <span
-                      className={`inline-flex items-center gap-1.5 text-sm px-3 py-1 rounded-full font-medium mt-2 ${CATEGORY_BADGE[FEATURED_INSTRUCTOR.category]}`}
-                    >
-                      <FeaturedCategoryIcon className="w-4 h-4" strokeWidth={2.5} />
-                      {FEATURED_INSTRUCTOR.category}
-                    </span>
-                  </div>
-                </div>
-
-                {FEATURED_RATING > 0 && (
-                  <div className="flex items-center gap-2 mb-6">
-                    {[1, 2, 3, 4, 5].map((i) => (
-                      <span
-                        key={i}
-                        className="text-2xl"
-                        style={{ color: i <= Math.round(FEATURED_RATING) ? "#F59E0B" : "#D1D5DB" }}
-                      >
-                        ★
-                      </span>
-                    ))}
-                    <span className="text-[#1E3A5F] text-lg font-bold ml-1">{FEATURED_RATING}</span>
-                    <span className="text-[#64748B] text-sm">（{FEATURED_REVIEWS.length}件）</span>
-                  </div>
-                )}
-
-                <div className="flex flex-wrap gap-2">
-                  {FEATURED_INSTRUCTOR.skills.slice(0, 3).map((skill) => (
-                    <span
-                      key={skill}
-                      className="text-sm bg-[#F1F5F9] text-[#64748B] px-3 py-1.5 rounded-full"
-                    >
-                      {skill}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              {/* 統計バッジ: デスクトップではカード下辺に浮かせて配置、モバイルでは通常のブロック表示 */}
-              <div className="mt-6 flex flex-wrap justify-center gap-3 lg:mt-0 lg:absolute lg:-bottom-2 lg:left-1/2 lg:flex-nowrap lg:w-max lg:-translate-x-1/2">
-                {HERO_STATS.map(({ icon: Icon, label }) => (
-                  <div
-                    key={label}
-                    className="flex items-center gap-1.5 whitespace-nowrap rounded-full bg-white px-3 py-2 text-xs font-semibold shadow-md"
-                    style={{ color: "#1E3A5F" }}
-                  >
-                    <Icon className="w-3.5 h-3.5" style={{ color: "#3B82C4" }} />
-                    {label}
-                  </div>
-                ))}
+                  実践力を育てる講師を、必要なときに。
+                </span>
+              </h1>
+              <p className="text-blue-50 text-base sm:text-lg leading-relaxed mb-10">
+                日本語も、英語も、やさしい日本語も。
+                <br />
+                初心者から即戦力まで、経験豊富な講師陣が
+                <br />
+                企業の研修も、個人のスキルアップも支えます。
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-start">
+                <Link
+                  href="/instructors"
+                  className="px-8 py-4 font-bold rounded-xl text-base shadow-lg transition-colors text-white"
+                  style={{ backgroundColor: "#10B981" }}
+                >
+                  講師を探す →
+                </Link>
+                <Link
+                  href="/register"
+                  className="px-8 py-4 font-semibold rounded-xl text-base border-2 border-white text-white transition-colors hover:bg-white/10"
+                >
+                  講師登録
+                </Link>
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* ─── トラストバッジ・クイックナビ ─── */}
+      <section className="py-16 px-6 bg-white overflow-hidden">
+        {/* トラストバッジ */}
+        <div className="max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-6">
+          {TRUST_BADGES.map(({ icon: Icon, title, value }) => (
+            <div
+              key={title}
+              className="bg-white rounded-2xl shadow-md border border-gray-100 p-6 text-center"
+            >
+              <div
+                className="w-11 h-11 rounded-xl flex items-center justify-center mx-auto mb-3"
+                style={{ backgroundColor: "#F1F5F9" }}
+              >
+                <Icon className="w-5 h-5" style={{ color: "#3B82C4" }} />
+              </div>
+              <p className="text-lg font-bold" style={{ color: "#1E3A5F" }}>
+                {value}
+              </p>
+              <p className="text-[#64748B] text-sm mt-1">{title}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* クイックナビ */}
+        <div className="max-w-3xl mx-auto mt-10 flex flex-wrap justify-center gap-x-8 gap-y-3">
+          {QUICK_NAV.map(({ href, label }) => (
+            <Link
+              key={href}
+              href={href}
+              className="text-sm font-medium transition-colors"
+              style={{ color: "#3B82C4" }}
+            >
+              {label} →
+            </Link>
+          ))}
         </div>
       </section>
 
