@@ -3,15 +3,16 @@
 import Link from "next/link";
 import type { Instructor } from "@/data/instructors";
 import { useFavorites } from "@/hooks/useFavorites";
-import { CATEGORY_BADGE } from "@/lib/categoryStyles";
+import { CATEGORY_BADGE, CATEGORY_ICON } from "@/lib/categoryStyles";
 import InstructorAvatar from "@/components/InstructorAvatar";
 
 export default function InstructorCard({ instructor }: { instructor: Instructor }) {
   const { isFavorited, toggleFavorite } = useFavorites();
   const favorited = isFavorited(instructor.id);
+  const CategoryIcon = CATEGORY_ICON[instructor.category];
 
   return (
-    <article className="relative bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+    <article className="relative bg-white rounded-xl shadow-sm border border-gray-100 transition-all duration-200 ease-out hover:shadow-lg hover:-translate-y-1">
       {/* カード全体をリンクにする（絶対配置）*/}
       <Link
         href={`/instructors/${instructor.id}`}
@@ -29,8 +30,9 @@ export default function InstructorCard({ instructor }: { instructor: Instructor 
                 {instructor.name}
               </h3>
               <span
-                className={`text-xs px-2 py-0.5 rounded-full font-medium ${CATEGORY_BADGE[instructor.category]}`}
+                className={`inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full font-medium ${CATEGORY_BADGE[instructor.category]}`}
               >
+                <CategoryIcon className="w-3 h-3" strokeWidth={2.5} />
                 {instructor.category}
               </span>
               {instructor.id.startsWith("custom-") && (

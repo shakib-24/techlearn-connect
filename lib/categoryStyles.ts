@@ -1,4 +1,13 @@
+import { Brain, Cloud, Code, Palette, Server, type LucideIcon } from "lucide-react";
 import type { Instructor } from "@/data/instructors";
+
+export const CATEGORY_ICON: Record<Instructor["category"], LucideIcon> = {
+  Frontend: Code,
+  Backend: Server,
+  Infrastructure: Cloud,
+  "UI/UX Design": Palette,
+  "AI/Data Science": Brain,
+};
 
 export const CATEGORY_BADGE: Record<Instructor["category"], string> = {
   Frontend: "bg-blue-100 text-blue-700",

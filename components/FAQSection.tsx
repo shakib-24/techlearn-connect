@@ -35,6 +35,12 @@ export default function FAQSection() {
   return (
     <section id="faq" className="scroll-mt-20 py-20 px-6 bg-[#F1F5F9]">
       <div className="max-w-3xl mx-auto">
+        <p
+          className="text-center text-xs font-semibold uppercase tracking-widest mb-2"
+          style={{ color: "#3B82C4" }}
+        >
+          FAQ
+        </p>
         <h2 className="text-2xl font-bold text-center text-[#1E3A5F] mb-2">
           よくある質問
         </h2>
