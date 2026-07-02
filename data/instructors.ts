@@ -18,6 +18,7 @@ export interface Instructor {
   achievements: string[];
   curriculum: string[];
   initials: string;
+  avatar: string;
   reviews?: Review[];
 }
 
@@ -44,6 +45,7 @@ export const instructors: Instructor[] = [
       "チーム開発を想定したコードレビュー演習"
     ],
     initials: "TK",
+    avatar: "/instructors/instructor-1.jpg",
     reviews: [
       { id: "r1", reviewerType: "企業研修担当者", rating: 5, comment: "React研修を10名で受講しました。現場感覚を交えた解説が非常にわかりやすく、研修後すぐに実業務で活用できました。来年度もぜひお願いしたいと思っています。", date: "2026年4月" },
       { id: "r2", reviewerType: "個人受講者", rating: 5, comment: "TypeScriptの型設計から実際のプロジェクト構成まで丁寧に教えていただきました。質問のたびに具体的なコードを書いてくれるので非常に理解しやすかったです。", date: "2026年3月" },
@@ -72,6 +74,7 @@ export const instructors: Instructor[] = [
       "デザインと開発の効果的な連携プロセス"
     ],
     initials: "SW",
+    avatar: "/instructors/instructor-2.jpg",
     reviews: [
       { id: "r4", reviewerType: "個人受講者", rating: 5, comment: "英語と日本語を交えた研修で、グローバルな視点のデザイン思考を学べました。Figmaのハンズオンが特に実践的で、翌日から業務に使えるレベルの知識が身につきました。", date: "2026年5月" },
       { id: "r5", reviewerType: "企業研修担当者", rating: 5, comment: "グローバルチーム向けにデザインシステム構築の研修をお願いしました。英語・日本語両対応で進めていただき、外国籍メンバーも大変満足していました。", date: "2026年4月" },
@@ -99,6 +102,7 @@ export const instructors: Instructor[] = [
       "Dockerによる開発環境の統一"
     ],
     initials: "YK",
+    avatar: "/instructors/instructor-3.jpg",
     reviews: [
       { id: "r6", reviewerType: "個人受講者", rating: 5, comment: "プログラミング未経験からDjango REST APIを構築できるようになりました。一つひとつのステップを丁寧に説明してくれるので、詰まることなく進められました。本当におすすめです。", date: "2026年3月" },
       { id: "r7", reviewerType: "企業研修担当者", rating: 5, comment: "文系出身の社員へのPython研修を依頼しました。難しい概念もわかりやすく噛み砕いてくれて、受講者全員が「楽しかった」と言っていたのが印象的でした。", date: "2026年2月" },
@@ -126,6 +130,7 @@ export const instructors: Instructor[] = [
       "MLOpsと本番環境へのデプロイ"
     ],
     initials: "AC",
+    avatar: "/instructors/instructor-4.jpg",
     reviews: [
       { id: "r8", reviewerType: "企業研修担当者", rating: 5, comment: "LLMを活用した業務自動化の研修を依頼しました。実際の業務シナリオに沿った内容で、研修後すぐにPoCを開始できました。費用対効果が非常に高い研修でした。", date: "2026年4月" },
       { id: "r9", reviewerType: "国際学生", rating: 4, comment: "The English and Japanese mixed session was very effective for our diverse team. Alex explained complex ML concepts in an accessible way. Highly recommended for international teams.", date: "2026年3月" },
@@ -153,6 +158,7 @@ export const instructors: Instructor[] = [
       "クラウドセキュリティのベストプラクティス"
     ],
     initials: "NK",
+    avatar: "/instructors/instructor-5.jpg",
     reviews: [
       { id: "r10", reviewerType: "企業研修担当者", rating: 5, comment: "2日間の集中研修でAWSの主要サービスをひととおり学べました。Terraformのハンズオンが特に充実しており、研修後すぐに実環境へ適用できました。スピード感のある研修でした。", date: "2026年5月" },
       { id: "r11", reviewerType: "個人受講者", rating: 5, comment: "Kubernetes研修を受けました。実際のクラスタを触りながら学べる実践的なスタイルで、クラウド認定資格の勉強にも大いに役立っています。また受講したいです。", date: "2026年3月" },
@@ -180,6 +186,7 @@ export const instructors: Instructor[] = [
       "アクセシビリティの基礎と実装チェックリスト"
     ],
     initials: "YY",
+    avatar: "/instructors/instructor-6.jpg",
     reviews: [
       { id: "r12", reviewerType: "企業研修担当者", rating: 5, comment: "外国籍社員が多い職場向けにやさしい日本語でのHTML/CSS研修をお願いしました。図解が豊富で、日本語に不慣れなメンバーにも大変好評でした。", date: "2026年4月" },
       { id: "r13", reviewerType: "個人受講者", rating: 5, comment: "プログラミング初心者ですが、Webの仕組みをゼロから丁寧に教えていただきました。専門用語がなくわかりやすく、自分のペースで理解できました。受講して本当によかったです。", date: "2026年3月" },
@@ -207,6 +214,7 @@ export const instructors: Instructor[] = [
       "機械学習入門（予測モデルの作り方と活用法）"
     ],
     initials: "SA",
+    avatar: "/instructors/instructor-7.jpg",
     reviews: [
       { id: "r14", reviewerType: "企業研修担当者", rating: 5, comment: "マーケティング部門のデータ活用研修として3日間のブートキャンプをお願いしました。文系出身の参加者でも理解できる内容で、研修後にTableauを積極的に使う社員が増えました。", date: "2026年4月" },
       { id: "r15", reviewerType: "個人受講者", rating: 4, comment: "データ分析未経験から受講しました。Pandasの使い方から可視化まで段階的に学べ、実業務のデータを使った演習があって非常に実践的でした。コメントが丁寧でわかりやすかったです。", date: "2026年3月" },

@@ -3,7 +3,8 @@
 import Link from "next/link";
 import type { Instructor } from "@/data/instructors";
 import { useFavorites } from "@/hooks/useFavorites";
-import { CATEGORY_BADGE, CATEGORY_AVATAR_COLOR } from "@/lib/categoryStyles";
+import { CATEGORY_BADGE } from "@/lib/categoryStyles";
+import InstructorAvatar from "@/components/InstructorAvatar";
 
 export default function InstructorCard({ instructor }: { instructor: Instructor }) {
   const { isFavorited, toggleFavorite } = useFavorites();
@@ -21,12 +22,7 @@ export default function InstructorCard({ instructor }: { instructor: Instructor 
       <div className="p-5">
         {/* ヘッダー: アバター + 名前 + カテゴリバッジ */}
         <div className="flex items-start gap-4">
-          <div
-            className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-base flex-shrink-0"
-            style={{ backgroundColor: CATEGORY_AVATAR_COLOR[instructor.category] }}
-          >
-            {instructor.initials}
-          </div>
+          <InstructorAvatar instructor={instructor} size={48} textSizeClass="text-base" />
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
               <h3 className="font-bold text-[#1E3A5F] text-lg leading-tight">

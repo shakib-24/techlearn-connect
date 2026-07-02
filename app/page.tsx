@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import FAQSection from "@/components/FAQSection";
 import LPHeader from "@/components/LPHeader";
 
 export const metadata: Metadata = {
@@ -72,7 +73,7 @@ export default function LandingPage() {
       </section>
 
       {/* ─── Why choose us ─── */}
-      <section className="py-20 px-6 bg-[#F1F5F9]">
+      <section id="service" className="scroll-mt-20 py-20 px-6 bg-[#F1F5F9]">
         <div className="max-w-5xl mx-auto">
           <h2 className="text-2xl font-bold text-center text-[#1E3A5F] mb-2">
             なぜ選ばれるのか
@@ -158,7 +159,7 @@ export default function LandingPage() {
       </section>
 
       {/* ─── How it works ─── */}
-      <section className="py-20 px-6 bg-white">
+      <section id="flow" className="scroll-mt-20 py-20 px-6 bg-white">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-2xl font-bold text-center text-[#1E3A5F] mb-2">
             ご利用の流れ
@@ -199,6 +200,9 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+
+      {/* ─── FAQ ─── */}
+      <FAQSection />
 
       {/* ─── Footer ─── */}
       <footer style={{ backgroundColor: "#1E3A5F" }} className="text-white py-12 px-6">

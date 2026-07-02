@@ -122,6 +122,7 @@ export default function RegisterForm() {
       achievements: [],
       curriculum,
       initials: generateInitials(values.name),
+      avatar: "",
     };
 
     addInstructor(instructor);

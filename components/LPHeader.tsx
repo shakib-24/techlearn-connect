@@ -26,9 +26,8 @@ export default function LPHeader() {
   }, []);
 
   return (
-    <header className="sticky top-0 z-50 bg-white border-b border-gray-100 shadow-sm">
+    <header ref={navRef} className="sticky top-0 z-50 bg-white border-b border-gray-100 shadow-sm">
       <nav
-        ref={navRef}
         className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between"
       >
         <div>
@@ -37,12 +36,30 @@ export default function LPHeader() {
         </div>
 
         {/* Desktop nav */}
-        <div className="hidden sm:flex items-center gap-3">
+        <div className="hidden md:flex items-center gap-3">
           <Link
             href="/instructors"
             className="text-sm font-medium text-[#64748B] hover:text-[#1E3A5F] transition-colors"
           >
             講師を探す
+          </Link>
+          <Link
+            href="/#service"
+            className="text-sm font-medium text-[#64748B] hover:text-[#1E3A5F] transition-colors"
+          >
+            サービス
+          </Link>
+          <Link
+            href="/#flow"
+            className="text-sm font-medium text-[#64748B] hover:text-[#1E3A5F] transition-colors"
+          >
+            ご利用の流れ
+          </Link>
+          <Link
+            href="/#faq"
+            className="text-sm font-medium text-[#64748B] hover:text-[#1E3A5F] transition-colors"
+          >
+            FAQ
           </Link>
           <AuthNav theme="light" />
           <Link
@@ -55,7 +72,7 @@ export default function LPHeader() {
 
         {/* Hamburger (mobile) */}
         <button
-          className="sm:hidden flex flex-col justify-center items-center w-9 h-9 gap-1.5 rounded-lg hover:bg-gray-100 transition-colors"
+          className="md:hidden flex flex-col justify-center items-center w-9 h-9 gap-1.5 rounded-lg hover:bg-gray-100 transition-colors"
           onClick={() => setOpen((v) => !v)}
           aria-label={open ? "メニューを閉じる" : "メニューを開く"}
           aria-expanded={open}
@@ -80,7 +97,7 @@ export default function LPHeader() {
 
       {/* Mobile dropdown */}
       {open && (
-        <div className="sm:hidden bg-white border-t border-gray-100 shadow-md">
+        <div className="md:hidden bg-white border-t border-gray-100 shadow-md">
           <div className="max-w-5xl mx-auto px-6 py-4 flex flex-col gap-3">
             <Link
               href="/instructors"
@@ -88,6 +105,27 @@ export default function LPHeader() {
               className="text-sm font-medium text-[#1E3A5F] hover:text-[#3B82C4] transition-colors py-2 border-b border-gray-50"
             >
               講師を探す
+            </Link>
+            <Link
+              href="/#service"
+              onClick={() => setOpen(false)}
+              className="text-sm font-medium text-[#1E3A5F] hover:text-[#3B82C4] transition-colors py-2 border-b border-gray-50"
+            >
+              サービス
+            </Link>
+            <Link
+              href="/#flow"
+              onClick={() => setOpen(false)}
+              className="text-sm font-medium text-[#1E3A5F] hover:text-[#3B82C4] transition-colors py-2 border-b border-gray-50"
+            >
+              ご利用の流れ
+            </Link>
+            <Link
+              href="/#faq"
+              onClick={() => setOpen(false)}
+              className="text-sm font-medium text-[#1E3A5F] hover:text-[#3B82C4] transition-colors py-2 border-b border-gray-50"
+            >
+              FAQ
             </Link>
             <AuthNav theme="light" stacked onNavigate={() => setOpen(false)} />
             <Link

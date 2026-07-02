@@ -4,10 +4,11 @@ import Link from "next/link";
 import type { Instructor } from "@/data/instructors";
 import { useAuth } from "@/hooks/useAuth";
 import { useFavorites } from "@/hooks/useFavorites";
-import { CATEGORY_BADGE, CATEGORY_AVATAR_COLOR } from "@/lib/categoryStyles";
+import { CATEGORY_BADGE } from "@/lib/categoryStyles";
 import AuthNav from "@/components/AuthNav";
 import ContactForm from "@/components/ContactForm";
 import GatedContent from "@/components/GatedContent";
+import InstructorAvatar from "@/components/InstructorAvatar";
 import ReviewSection from "@/components/ReviewSection";
 
 export default function DetailContent({ instructor }: { instructor: Instructor }) {
@@ -38,12 +39,7 @@ export default function DetailContent({ instructor }: { instructor: Instructor }
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
           <div className="flex items-start justify-between gap-4">
             <div className="flex items-start gap-5">
-              <div
-                className="w-16 h-16 rounded-full flex items-center justify-center text-white font-bold text-xl flex-shrink-0"
-              style={{ backgroundColor: CATEGORY_AVATAR_COLOR[instructor.category] }}
-              >
-                {instructor.initials}
-              </div>
+              <InstructorAvatar instructor={instructor} size={64} textSizeClass="text-xl" />
               <div>
                 <h1 className="text-2xl font-bold text-[#1E3A5F]">
                   {instructor.name}
