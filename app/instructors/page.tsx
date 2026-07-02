@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import AuthNav from "@/components/AuthNav";
 import InstructorList from "@/components/InstructorList";
 
 export const metadata: Metadata = {
@@ -12,7 +13,7 @@ export default function InstructorsPage() {
   return (
     <div className="min-h-screen bg-[#F1F5F9]">
       <nav className="bg-[#1E3A5F] text-white px-6 py-4">
-        <div className="max-w-4xl mx-auto flex items-center justify-between">
+        <div className="max-w-4xl mx-auto flex flex-wrap items-center justify-between gap-y-2">
           <div className="flex items-center gap-3">
             <Link
               href="/"
@@ -23,12 +24,15 @@ export default function InstructorsPage() {
             <span className="text-white/20">|</span>
             <span className="font-bold text-base">TechLearn Connect</span>
           </div>
-          <Link
-            href="/register"
-            className="text-sm font-semibold text-white border border-white/30 px-4 py-1.5 rounded-lg hover:bg-white/10 transition-colors"
-          >
-            講師登録
-          </Link>
+          <div className="flex flex-wrap items-center justify-end gap-x-4 gap-y-2">
+            <AuthNav theme="dark" />
+            <Link
+              href="/register"
+              className="text-sm font-semibold text-white border border-white/30 px-4 py-1.5 rounded-lg hover:bg-white/10 transition-colors"
+            >
+              講師登録
+            </Link>
+          </div>
         </div>
       </nav>
 

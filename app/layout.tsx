@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { AuthProvider } from "@/hooks/useAuth";
 import { FavoritesProvider } from "@/hooks/useFavorites";
 import "./globals.css";
 
@@ -27,7 +28,9 @@ export default function RootLayout({
   return (
     <html lang="ja">
       <body className={`${inter.className} antialiased`}>
-        <FavoritesProvider>{children}</FavoritesProvider>
+        <AuthProvider>
+          <FavoritesProvider>{children}</FavoritesProvider>
+        </AuthProvider>
       </body>
     </html>
   );

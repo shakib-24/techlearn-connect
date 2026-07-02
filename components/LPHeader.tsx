@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import AuthNav from "./AuthNav";
 
 export default function LPHeader() {
   const [open, setOpen] = useState(false);
@@ -43,6 +44,7 @@ export default function LPHeader() {
           >
             講師を探す
           </Link>
+          <AuthNav theme="light" />
           <Link
             href="/register"
             className="text-sm font-semibold text-white bg-[#3B82C4] px-4 py-2 rounded-lg hover:bg-[#1E3A5F] transition-colors"
@@ -87,6 +89,7 @@ export default function LPHeader() {
             >
               講師を探す
             </Link>
+            <AuthNav theme="light" stacked onNavigate={() => setOpen(false)} />
             <Link
               href="/register"
               onClick={() => setOpen(false)}

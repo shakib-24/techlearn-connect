@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import type { Review } from "@/data/instructors";
+import { useAuth } from "@/hooks/useAuth";
 import { useReviews } from "@/hooks/useReviews";
+import LoginRequiredNotice from "@/components/LoginRequiredNotice";
 
 const REVIEWER_TYPES = ["企業研修担当者", "個人受講者", "国際学生", "その他"] as const;
 
@@ -73,6 +75,7 @@ export default function ReviewSection({
   staticReviews: Review[];
 }) {
   const { reviews, addReview } = useReviews(instructorId, staticReviews);
+  const { isLoggedIn } = useAuth();
   const [values, setValues] = useState<FormValues>(EMPTY);
   const [errors, setErrors] = useState<FormErrors>({});
   const [submitted, setSubmitted] = useState(false);
@@ -164,100 +167,109 @@ export default function ReviewSection({
       <div className="border-t border-gray-100 pt-5">
         <h3 className="font-semibold text-[#1E3A5F] text-sm mb-4">レビューを投稿する</h3>
 
-        {submitted && (
-          <div className="mb-4 px-4 py-3 bg-emerald-50 border border-emerald-200 rounded-lg text-emerald-700 text-sm font-medium">
-            ✓ レビューを投稿しました。ありがとうございます！
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} noValidate className="space-y-4">
-          {/* 受講者タイプ */}
-          <div>
-            <label className="block text-xs font-semibold text-[#1E3A5F] mb-1">
-              受講者タイプ <span className="text-red-500">*</span>
-            </label>
-            <select
-              value={values.reviewerType}
-              onChange={(e) => {
-                setValues((v) => ({ ...v, reviewerType: e.target.value }));
-                if (errors.reviewerType) setErrors((err) => ({ ...err, reviewerType: undefined }));
-              }}
-              className={`${inputBase} ${
-                errors.reviewerType
-                  ? "border-red-400 bg-red-50 text-[#1E3A5F]"
-                  : "border-gray-200 bg-white text-[#64748B]"
-              }`}
-            >
-              <option value="">選択してください</option>
-              {REVIEWER_TYPES.map((t) => (
-                <option key={t} value={t}>{t}</option>
-              ))}
-            </select>
-            {errors.reviewerType && (
-              <p className="text-red-500 text-xs mt-1">{errors.reviewerType}</p>
+        {!isLoggedIn ? (
+          <LoginRequiredNotice
+            message="レビューを投稿するにはログインが必要です"
+            redirectTo={`/instructors/${instructorId}`}
+          />
+        ) : (
+          <>
+            {submitted && (
+              <div className="mb-4 px-4 py-3 bg-emerald-50 border border-emerald-200 rounded-lg text-emerald-700 text-sm font-medium">
+                ✓ レビューを投稿しました。ありがとうございます！
+              </div>
             )}
-          </div>
 
-          {/* 評価（星） */}
-          <div>
-            <label className="block text-xs font-semibold text-[#1E3A5F] mb-1">
-              評価 <span className="text-red-500">*</span>
-            </label>
-            <Stars
-              rating={values.rating}
-              interactive
-              onSelect={(v) => {
-                setValues((prev) => ({ ...prev, rating: v }));
-                if (errors.rating) setErrors((err) => ({ ...err, rating: undefined }));
-              }}
-            />
-            {errors.rating && (
-              <p className="text-red-500 text-xs mt-1">{errors.rating}</p>
-            )}
-          </div>
+            <form onSubmit={handleSubmit} noValidate className="space-y-4">
+              {/* 受講者タイプ */}
+              <div>
+                <label className="block text-xs font-semibold text-[#1E3A5F] mb-1">
+                  受講者タイプ <span className="text-red-500">*</span>
+                </label>
+                <select
+                  value={values.reviewerType}
+                  onChange={(e) => {
+                    setValues((v) => ({ ...v, reviewerType: e.target.value }));
+                    if (errors.reviewerType) setErrors((err) => ({ ...err, reviewerType: undefined }));
+                  }}
+                  className={`${inputBase} ${
+                    errors.reviewerType
+                      ? "border-red-400 bg-red-50 text-[#1E3A5F]"
+                      : "border-gray-200 bg-white text-[#64748B]"
+                  }`}
+                >
+                  <option value="">選択してください</option>
+                  {REVIEWER_TYPES.map((t) => (
+                    <option key={t} value={t}>{t}</option>
+                  ))}
+                </select>
+                {errors.reviewerType && (
+                  <p className="text-red-500 text-xs mt-1">{errors.reviewerType}</p>
+                )}
+              </div>
 
-          {/* コメント */}
-          <div>
-            <label className="block text-xs font-semibold text-[#1E3A5F] mb-1">
-              コメント <span className="text-red-500">*</span>
-              <span className="text-[#64748B] font-normal ml-1">（10文字以上）</span>
-            </label>
-            <textarea
-              value={values.comment}
-              onChange={(e) => {
-                setValues((v) => ({ ...v, comment: e.target.value }));
-                if (errors.comment) setErrors((err) => ({ ...err, comment: undefined }));
-              }}
-              rows={4}
-              placeholder="研修の感想、学んだこと、おすすめできる点などをお書きください"
-              className={`${inputBase} resize-none ${
-                errors.comment ? "border-red-400 bg-red-50" : "border-gray-200 bg-white"
-              }`}
-            />
-            <div className="flex justify-between items-center mt-1">
-              {errors.comment ? (
-                <p className="text-red-500 text-xs">{errors.comment}</p>
-              ) : (
-                <span />
-              )}
-              <span
-                className={`text-xs ml-auto ${
-                  values.comment.trim().length >= 10 ? "text-emerald-600" : "text-[#64748B]"
-                }`}
+              {/* 評価（星） */}
+              <div>
+                <label className="block text-xs font-semibold text-[#1E3A5F] mb-1">
+                  評価 <span className="text-red-500">*</span>
+                </label>
+                <Stars
+                  rating={values.rating}
+                  interactive
+                  onSelect={(v) => {
+                    setValues((prev) => ({ ...prev, rating: v }));
+                    if (errors.rating) setErrors((err) => ({ ...err, rating: undefined }));
+                  }}
+                />
+                {errors.rating && (
+                  <p className="text-red-500 text-xs mt-1">{errors.rating}</p>
+                )}
+              </div>
+
+              {/* コメント */}
+              <div>
+                <label className="block text-xs font-semibold text-[#1E3A5F] mb-1">
+                  コメント <span className="text-red-500">*</span>
+                  <span className="text-[#64748B] font-normal ml-1">（10文字以上）</span>
+                </label>
+                <textarea
+                  value={values.comment}
+                  onChange={(e) => {
+                    setValues((v) => ({ ...v, comment: e.target.value }));
+                    if (errors.comment) setErrors((err) => ({ ...err, comment: undefined }));
+                  }}
+                  rows={4}
+                  placeholder="研修の感想、学んだこと、おすすめできる点などをお書きください"
+                  className={`${inputBase} resize-none ${
+                    errors.comment ? "border-red-400 bg-red-50" : "border-gray-200 bg-white"
+                  }`}
+                />
+                <div className="flex justify-between items-center mt-1">
+                  {errors.comment ? (
+                    <p className="text-red-500 text-xs">{errors.comment}</p>
+                  ) : (
+                    <span />
+                  )}
+                  <span
+                    className={`text-xs ml-auto ${
+                      values.comment.trim().length >= 10 ? "text-emerald-600" : "text-[#64748B]"
+                    }`}
+                  >
+                    {values.comment.trim().length} / 10+
+                  </span>
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                className="w-full py-3 text-white font-bold rounded-xl text-sm transition-opacity hover:opacity-90"
+                style={{ backgroundColor: "#1E3A5F" }}
               >
-                {values.comment.trim().length} / 10+
-              </span>
-            </div>
-          </div>
-
-          <button
-            type="submit"
-            className="w-full py-3 text-white font-bold rounded-xl text-sm transition-opacity hover:opacity-90"
-            style={{ backgroundColor: "#1E3A5F" }}
-          >
-            レビューを投稿する
-          </button>
-        </form>
+                レビューを投稿する
+              </button>
+            </form>
+          </>
+        )}
       </div>
     </div>
   );
