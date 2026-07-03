@@ -269,8 +269,7 @@ export default function RegisterForm() {
         <div>
           <button
             type="submit"
-            className="w-full py-3 text-white font-bold rounded-xl text-sm transition-colors"
-            style={{ backgroundColor: "#1E3A5F" }}
+            className="w-full py-3 text-white font-bold rounded-xl text-sm transition-colors bg-gradient-to-r from-[#1E3A5F] to-[#3B82C4]"
           >
             プロフィールを登録する
           </button>

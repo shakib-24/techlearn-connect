@@ -66,7 +66,7 @@ export default function RegisterSuccessModal({ instructorName, onClose }: Props)
     <div
       ref={overlayRef}
       onClick={handleOverlayClick}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 animate-fade-in"
       role="dialog"
       aria-modal="true"
       aria-labelledby="reg-modal-title"
@@ -74,7 +74,7 @@ export default function RegisterSuccessModal({ instructorName, onClose }: Props)
       <div
         ref={modalRef}
         tabIndex={-1}
-        className="bg-white rounded-2xl shadow-2xl p-8 max-w-sm w-full mx-4 text-center outline-none"
+        className="bg-white rounded-2xl shadow-2xl p-8 max-w-sm w-full mx-4 text-center outline-none animate-modal-in"
       >
         {/* Check icon */}
         <div
@@ -105,8 +105,7 @@ export default function RegisterSuccessModal({ instructorName, onClose }: Props)
 
         <button
           onClick={handleViewList}
-          className="w-full py-3 font-bold rounded-xl text-white text-sm transition-colors mb-2"
-          style={{ backgroundColor: "#10B981" }}
+          className="w-full py-3 font-bold rounded-xl text-white text-sm transition-colors mb-2 bg-gradient-to-r from-[#10B981] to-[#3B82C4]"
         >
           一覧を見る →
         </button>

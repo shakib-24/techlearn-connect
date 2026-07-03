@@ -54,9 +54,14 @@ export default function AuthNav({
     onNavigate?.();
   };
 
+  const displayName =
+    (user?.user_metadata?.name as string | undefined) ||
+    user?.email?.split("@")[0] ||
+    "ユーザー";
+
   return (
     <div className={stacked ? "flex flex-col" : "flex items-center gap-3"}>
-      <span className={userClass}>{user?.name} さん</span>
+      <span className={userClass}>{displayName} さん</span>
       <button type="button" onClick={handleLogout} className={logoutClass}>
         ログアウト
       </button>

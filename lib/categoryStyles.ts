@@ -11,10 +11,10 @@ export const CATEGORY_ICON: Record<Instructor["category"], LucideIcon> = {
 
 export const CATEGORY_BADGE: Record<Instructor["category"], string> = {
   Frontend: "bg-blue-100 text-blue-700",
-  Backend: "bg-green-100 text-green-700",
-  Infrastructure: "bg-orange-100 text-orange-700",
-  "UI/UX Design": "bg-purple-100 text-purple-700",
-  "AI/Data Science": "bg-teal-100 text-teal-700",
+  Backend: "bg-emerald-100 text-emerald-700",
+  Infrastructure: "bg-slate-200 text-[#1E3A5F]",
+  "UI/UX Design": "bg-blue-200 text-blue-800",
+  "AI/Data Science": "bg-emerald-200 text-emerald-800",
 };
 
 export const CATEGORY_AVATAR_COLOR: Record<Instructor["category"], string> = {

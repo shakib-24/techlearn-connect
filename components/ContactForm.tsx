@@ -130,7 +130,7 @@ export default function ContactForm({ instructorName }: { instructorName: string
           </div>
 
           {/* 予定時期 + 予算 */}
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-semibold text-[#1E3A5F] mb-1">
                 予定時期
@@ -186,8 +186,7 @@ export default function ContactForm({ instructorName }: { instructorName: string
           <div>
             <button
               type="submit"
-              className="w-full py-3 text-white font-bold rounded-xl text-sm transition-colors"
-              style={{ backgroundColor: "#3B82C4" }}
+              className="w-full py-3 text-white font-bold rounded-xl text-sm transition-colors bg-gradient-to-r from-[#1E3A5F] to-[#3B82C4]"
             >
               依頼を送信する
             </button>

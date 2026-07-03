@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { AuthProvider } from "@/hooks/useAuth";
 import { FavoritesProvider } from "@/hooks/useFavorites";
+import { ToastProvider } from "@/hooks/useToast";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -29,7 +30,9 @@ export default function RootLayout({
     <html lang="ja">
       <body className={`${inter.className} antialiased`}>
         <AuthProvider>
-          <FavoritesProvider>{children}</FavoritesProvider>
+          <FavoritesProvider>
+            <ToastProvider>{children}</ToastProvider>
+          </FavoritesProvider>
         </AuthProvider>
       </body>
     </html>

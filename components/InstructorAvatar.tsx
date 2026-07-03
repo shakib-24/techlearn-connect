@@ -30,14 +30,18 @@ export default function InstructorAvatar({
   }
 
   return (
-    <Image
-      src={instructor.avatar}
-      alt={instructor.name}
-      width={size}
-      height={size}
-      className={`rounded-full object-cover flex-shrink-0 ${className}`}
+    <div
+      className={`overflow-hidden rounded-full flex-shrink-0 ${className}`}
       style={{ width: size, height: size }}
-      onError={() => setFailed(true)}
-    />
+    >
+      <Image
+        src={instructor.avatar}
+        alt={instructor.name}
+        width={size}
+        height={size}
+        className="w-full h-full object-cover transition-transform duration-200 ease-out group-hover:scale-105"
+        onError={() => setFailed(true)}
+      />
+    </div>
   );
 }

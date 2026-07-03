@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import AuthNav from "@/components/AuthNav";
 import InstructorList from "@/components/InstructorList";
+import { createClient } from "@/lib/supabase";
+import type { Instructor } from "@/data/instructors";
 
 export const metadata: Metadata = {
   title: "講師を探す",
@@ -9,7 +11,20 @@ export const metadata: Metadata = {
     "フロントエンド・Backend・Infrastructure・UI/UX Design・AI/Data Scienceなど5カテゴリのプロ講師を検索・比較。オンライン・対面・両方対応から選択可能。",
 };
 
-export default function InstructorsPage() {
+export const dynamic = "force-dynamic";
+
+export default async function InstructorsPage() {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from("instructors")
+    .select("*")
+    .order("created_at", { ascending: true });
+
+  if (error) {
+    console.error("Failed to fetch instructors:", error.message);
+  }
+  const instructors = (data ?? []) as Instructor[];
+
   return (
     <div className="min-h-screen bg-[#F1F5F9]">
       <nav className="bg-[#1E3A5F] text-white px-6 py-4">
@@ -43,7 +58,7 @@ export default function InstructorsPage() {
             あなたのニーズに合ったプロ講師を見つけましょう
           </p>
         </div>
-        <InstructorList />
+        <InstructorList instructors={instructors} />
       </main>
     </div>
   );

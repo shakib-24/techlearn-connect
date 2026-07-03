@@ -25,19 +25,6 @@ export default function AuthTabs() {
         </p>
       </div>
 
-      {isLogin && (
-        <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 mb-6">
-          <p className="text-[#1E3A5F] text-xs font-medium mb-1">デモアカウントについて</p>
-          <p className="text-[#64748B] text-xs leading-relaxed">
-            以下のデモアカウントでログインできます（本番の認証機能ではありません）。
-            <br />
-            メールアドレス: demo@techlearn.jp
-            <br />
-            パスワード: demo1234
-          </p>
-        </div>
-      )}
-
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 sm:p-8">
         {isLogin ? <LoginForm /> : <SignupForm />}
 

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/useToast";
 
 interface FormValues {
   name: string;
@@ -25,7 +26,11 @@ function validate(v: FormValues): FormErrors {
   } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.email)) {
     e.email = "有効なメールアドレスを入力してください";
   }
-  if (!v.password) e.password = "パスワードは必須です";
+  if (!v.password) {
+    e.password = "パスワードは必須です";
+  } else if (v.password.length < 8) {
+    e.password = "パスワードは8文字以上で入力してください";
+  }
   return e;
 }
 
@@ -37,10 +42,13 @@ const fieldClass = (hasError: boolean) =>
 export default function SignupForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { login } = useAuth();
+  const { signup } = useAuth();
+  const { showToast } = useToast();
 
   const [values, setValues] = useState<FormValues>(EMPTY);
   const [errors, setErrors] = useState<FormErrors>({});
+  const [authError, setAuthError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -48,9 +56,10 @@ export default function SignupForm() {
     if (errors[name as keyof FormErrors]) {
       setErrors((prev) => ({ ...prev, [name]: undefined }));
     }
+    if (authError) setAuthError("");
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const errs = validate(values);
     if (Object.keys(errs).length > 0) {
@@ -58,14 +67,40 @@ export default function SignupForm() {
       return;
     }
 
-    // モック認証: パスワードは保存せず、名前とメールアドレスのみで即ログイン状態にする
-    login({ name: values.name.trim(), email: values.email.trim() });
+    setSubmitting(true);
+    const { error, needsEmailConfirmation } = await signup(
+      values.email.trim(),
+      values.password,
+      values.name.trim()
+    );
+    setSubmitting(false);
+
+    if (error) {
+      setAuthError(error);
+      return;
+    }
+
+    if (needsEmailConfirmation) {
+      showToast("確認メールを送信しました。メール内のリンクから登録を完了してください");
+      router.push("/login");
+      return;
+    }
+
     const redirect = searchParams.get("redirect") || "/";
     router.push(redirect);
   };
 
   return (
     <form onSubmit={handleSubmit} noValidate className="space-y-4">
+      {authError && (
+        <div
+          className="px-4 py-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm font-medium"
+          role="alert"
+        >
+          {authError}
+        </div>
+      )}
+
       {/* 名前 */}
       <div>
         <label className="block text-xs font-semibold text-[#1E3A5F] mb-1">
@@ -116,10 +151,11 @@ export default function SignupForm() {
 
       <button
         type="submit"
-        className="w-full py-3 text-white font-bold rounded-xl text-sm transition-colors"
+        disabled={submitting}
+        className="w-full py-3 text-white font-bold rounded-xl text-sm transition-colors disabled:opacity-60"
         style={{ backgroundColor: "#1E3A5F" }}
       >
-        新規登録
+        {submitting ? "登録中..." : "新規登録"}
       </button>
     </form>
   );

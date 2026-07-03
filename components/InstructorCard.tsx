@@ -1,26 +1,30 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import type { Instructor } from "@/data/instructors";
 import { useFavorites } from "@/hooks/useFavorites";
+import { useToast } from "@/hooks/useToast";
 import { CATEGORY_BADGE, CATEGORY_ICON } from "@/lib/categoryStyles";
 import InstructorAvatar from "@/components/InstructorAvatar";
 
 export default function InstructorCard({ instructor }: { instructor: Instructor }) {
   const { isFavorited, toggleFavorite } = useFavorites();
+  const { showToast } = useToast();
   const favorited = isFavorited(instructor.id);
   const CategoryIcon = CATEGORY_ICON[instructor.category];
+  const [justToggled, setJustToggled] = useState(false);
 
   return (
-    <article className="relative bg-white rounded-xl shadow-sm border border-gray-100 transition-all duration-200 ease-out hover:shadow-lg hover:-translate-y-1">
+    <article className="group relative bg-white rounded-2xl shadow-sm border border-gray-100 transition-all duration-200 ease-out hover:shadow-lg hover:-translate-y-1 hover:scale-[1.02]">
       {/* カード全体をリンクにする（絶対配置）*/}
       <Link
         href={`/instructors/${instructor.id}`}
-        className="absolute inset-0 rounded-xl"
+        className="absolute inset-0 rounded-2xl"
         aria-label={`${instructor.name}の詳細を見る`}
       />
 
-      <div className="p-5">
+      <div className="p-6">
         {/* ヘッダー: アバター + 名前 + カテゴリバッジ */}
         <div className="flex items-start gap-4">
           <InstructorAvatar instructor={instructor} size={48} textSizeClass="text-base" />
@@ -81,10 +85,20 @@ export default function InstructorCard({ instructor }: { instructor: Instructor 
             onClick={(e) => {
               e.preventDefault();
               toggleFavorite(instructor.id);
+              setJustToggled(false);
+              requestAnimationFrame(() => setJustToggled(true));
+              showToast(
+                favorited ? "お気に入りを解除しました" : "お気に入りに追加しました"
+              );
             }}
             aria-label={favorited ? "お気に入りを解除" : "お気に入りに追加"}
           >
-            <span className="text-base">{favorited ? "♥" : "♡"}</span>
+            <span
+              className={`text-base inline-block ${justToggled ? "animate-bounce-scale" : ""}`}
+              onAnimationEnd={() => setJustToggled(false)}
+            >
+              {favorited ? "♥" : "♡"}
+            </span>
           </button>
         </div>
       </div>

@@ -63,7 +63,7 @@ export default function SuccessModal({ instructorName, onClose }: Props) {
     <div
       ref={overlayRef}
       onClick={handleOverlayClick}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 animate-fade-in"
       role="dialog"
       aria-modal="true"
       aria-labelledby="modal-title"
@@ -71,7 +71,7 @@ export default function SuccessModal({ instructorName, onClose }: Props) {
       <div
         ref={modalRef}
         tabIndex={-1}
-        className="bg-white rounded-2xl shadow-2xl p-8 max-w-sm w-full mx-4 text-center outline-none"
+        className="bg-white rounded-2xl shadow-2xl p-8 max-w-sm w-full mx-4 text-center outline-none animate-modal-in"
       >
         {/* Check icon */}
         <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-5" style={{ backgroundColor: "#D1FAE5" }}>
@@ -94,8 +94,7 @@ export default function SuccessModal({ instructorName, onClose }: Props) {
 
         <button
           onClick={onClose}
-          className="w-full py-3 font-bold rounded-xl text-white text-sm transition-colors"
-          style={{ backgroundColor: "#1E3A5F" }}
+          className="w-full py-3 font-bold rounded-xl text-white text-sm transition-colors bg-gradient-to-r from-[#1E3A5F] to-[#3B82C4]"
         >
           閉じる
         </button>

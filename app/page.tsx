@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { Languages, Star, Users } from "lucide-react";
 import FAQSection from "@/components/FAQSection";
+import InstructorAvatar from "@/components/InstructorAvatar";
 import LPHeader from "@/components/LPHeader";
+import ScrollReveal from "@/components/ScrollReveal";
+import TrustBadges from "@/components/TrustBadges";
 import { instructors } from "@/data/instructors";
 
 export const metadata: Metadata = {
@@ -28,23 +30,16 @@ const AVG_RATING =
     ? Math.round((ALL_REVIEWS.reduce((sum, r) => sum + r.rating, 0) / ALL_REVIEWS.length) * 10) / 10
     : 0;
 
-const TRUST_BADGES = [
-  {
-    icon: Users,
-    title: "登録講師",
-    value: `${INSTRUCTOR_COUNT}名 / ${CATEGORY_COUNT}分野`,
-  },
-  {
-    icon: Languages,
-    title: "対応言語",
-    value: "日本語・英語・やさしい日本語",
-  },
-  {
-    icon: Star,
-    title: "平均満足度",
-    value: `★ ${AVG_RATING} / 5.0`,
-  },
-];
+// ヒーローの「今週のピックアップ講師」用。実データからレビュー平均が最も高い講師を算出。
+const avgRatingOf = (i: (typeof instructors)[number]) =>
+  i.reviews && i.reviews.length > 0
+    ? i.reviews.reduce((sum, r) => sum + r.rating, 0) / i.reviews.length
+    : 0;
+const PICKUP_INSTRUCTOR = instructors.reduce((best, inst) =>
+  avgRatingOf(inst) > avgRatingOf(best) ? inst : best
+);
+const PICKUP_RATING = Math.round(avgRatingOf(PICKUP_INSTRUCTOR) * 10) / 10;
+const PICKUP_REVIEW_COUNT = PICKUP_INSTRUCTOR.reviews?.length ?? 0;
 
 const QUICK_NAV = [
   { href: "/#service", label: "なぜ選ばれるのか" },
@@ -79,9 +74,15 @@ export default function LandingPage() {
         {/* モバイル用: 画像全体を覆う濃いオーバーレイ（可読性確保） */}
         <div className="absolute inset-0 sm:hidden" style={{ backgroundColor: "rgba(30,58,95,0.55)" }} />
 
+        {/* 装飾ぼかし円（グラスカードの背後で発光させる） */}
+        <div
+          className="hidden sm:block absolute -z-10 rounded-full blur-3xl opacity-30 pointer-events-none"
+          style={{ width: 320, height: 320, right: "4%", bottom: "-4rem", backgroundColor: "#10B981" }}
+        />
+
         {/* テキスト（画像の上に重ねて配置） */}
         <div className="absolute inset-0 flex items-center">
-          <div className="max-w-6xl mx-auto px-6 w-full">
+          <div className="max-w-6xl mx-auto px-6 w-full relative z-10">
             <div className="max-w-[500px] text-left">
               <p className="text-xs font-semibold uppercase tracking-widest mb-5 text-blue-200">
                 IT研修講師マッチングサービス
@@ -104,8 +105,7 @@ export default function LandingPage() {
               <div className="flex flex-col sm:flex-row gap-4 justify-start">
                 <Link
                   href="/instructors"
-                  className="px-8 py-4 font-bold rounded-xl text-base shadow-lg transition-colors text-white"
-                  style={{ backgroundColor: "#10B981" }}
+                  className="px-8 py-4 font-bold rounded-xl text-base shadow-lg transition-colors text-white bg-gradient-to-r from-[#10B981] to-[#3B82C4]"
                 >
                   講師を探す →
                 </Link>
@@ -117,51 +117,78 @@ export default function LandingPage() {
                 </Link>
               </div>
             </div>
+
+            {/* 今週のピックアップ講師（グラスモーフィズムカード） */}
+            <div className="hidden sm:block absolute right-6 lg:right-16 bottom-10 w-64 backdrop-blur-md bg-white/70 border border-white/20 rounded-2xl shadow-lg p-5">
+              <div className="flex items-center gap-1.5 mb-3">
+                <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: "#10B981" }} />
+                <p className="text-[10px] font-semibold uppercase tracking-widest text-[#1E3A5F]">
+                  今週のピックアップ講師
+                </p>
+              </div>
+              <div className="flex items-center gap-3">
+                <InstructorAvatar instructor={PICKUP_INSTRUCTOR} size={44} textSizeClass="text-sm" />
+                <div className="min-w-0">
+                  <p className="font-bold text-[#1E3A5F] text-sm truncate">
+                    {PICKUP_INSTRUCTOR.name}
+                  </p>
+                  <p className="text-[#64748B] text-xs truncate">{PICKUP_INSTRUCTOR.category}</p>
+                </div>
+              </div>
+              <div className="flex items-baseline gap-1 mt-3">
+                <span className="text-sm font-bold" style={{ color: "#1E3A5F" }}>
+                  ★ {PICKUP_RATING.toFixed(1)}
+                </span>
+                <span className="text-[#64748B] text-xs">
+                  （{PICKUP_REVIEW_COUNT}件のレビュー）
+                </span>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
       {/* ─── トラストバッジ・クイックナビ ─── */}
-      <section className="py-16 px-6 bg-white overflow-hidden">
-        {/* トラストバッジ */}
-        <div className="max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-6">
-          {TRUST_BADGES.map(({ icon: Icon, title, value }) => (
-            <div
-              key={title}
-              className="bg-white rounded-2xl shadow-md border border-gray-100 p-6 text-center"
-            >
-              <div
-                className="w-11 h-11 rounded-xl flex items-center justify-center mx-auto mb-3"
-                style={{ backgroundColor: "#F1F5F9" }}
-              >
-                <Icon className="w-5 h-5" style={{ color: "#3B82C4" }} />
-              </div>
-              <p className="text-lg font-bold" style={{ color: "#1E3A5F" }}>
-                {value}
-              </p>
-              <p className="text-[#64748B] text-sm mt-1">{title}</p>
-            </div>
-          ))}
-        </div>
+      <section className="relative py-20 px-6 bg-white overflow-hidden">
+        {/* 装飾ぼかし円 */}
+        <div
+          className="absolute -z-10 rounded-full blur-3xl opacity-20 pointer-events-none"
+          style={{ width: 340, height: 340, left: "-6%", top: "-8rem", backgroundColor: "#3B82C4" }}
+        />
 
-        {/* クイックナビ */}
-        <div className="max-w-3xl mx-auto mt-10 flex flex-wrap justify-center gap-x-8 gap-y-3">
-          {QUICK_NAV.map(({ href, label }) => (
-            <Link
-              key={href}
-              href={href}
-              className="text-sm font-medium transition-colors"
-              style={{ color: "#3B82C4" }}
-            >
-              {label} →
-            </Link>
-          ))}
+        <div className="relative z-10">
+          {/* トラストバッジ */}
+          <TrustBadges
+            instructorCount={INSTRUCTOR_COUNT}
+            categoryCount={CATEGORY_COUNT}
+            avgRating={AVG_RATING}
+          />
+
+          {/* クイックナビ */}
+          <div className="max-w-3xl mx-auto mt-10 flex flex-wrap justify-center gap-x-8 gap-y-3">
+            {QUICK_NAV.map(({ href, label }) => (
+              <Link
+                key={href}
+                href={href}
+                className="text-sm font-medium transition-colors"
+                style={{ color: "#3B82C4" }}
+              >
+                {label} →
+              </Link>
+            ))}
+          </div>
         </div>
       </section>
 
       {/* ─── Why choose us ─── */}
-      <section id="service" className="scroll-mt-20 py-20 px-6 bg-[#F1F5F9]">
-        <div className="max-w-5xl mx-auto">
+      <section id="service" className="relative scroll-mt-20 py-20 px-6 bg-[#F1F5F9] overflow-hidden">
+        {/* 装飾ぼかし円 */}
+        <div
+          className="absolute -z-10 rounded-full blur-3xl opacity-25 pointer-events-none"
+          style={{ width: 360, height: 360, right: "-8%", bottom: "-6rem", backgroundColor: "#10B981" }}
+        />
+
+        <div className="max-w-5xl mx-auto relative z-10">
           <p
             className="text-center text-xs font-semibold uppercase tracking-widest mb-2"
             style={{ color: "#3B82C4" }}
@@ -177,7 +204,7 @@ export default function LandingPage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
             {/* 企業向け */}
-            <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
+            <ScrollReveal className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
               <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center mb-4 text-xl">
                 🏢
               </div>
@@ -210,10 +237,13 @@ export default function LandingPage() {
                   </li>
                 ))}
               </ul>
-            </div>
+            </ScrollReveal>
 
             {/* 講師向け */}
-            <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
+            <ScrollReveal
+              className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100"
+              delayMs={100}
+            >
               <div className="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center mb-4 text-xl">
                 👨‍🏫
               </div>
@@ -246,14 +276,20 @@ export default function LandingPage() {
                   </li>
                 ))}
               </ul>
-            </div>
+            </ScrollReveal>
           </div>
         </div>
       </section>
 
       {/* ─── How it works ─── */}
-      <section id="flow" className="scroll-mt-20 py-20 px-6 bg-white">
-        <div className="max-w-4xl mx-auto">
+      <section id="flow" className="relative scroll-mt-20 py-20 px-6 bg-white overflow-hidden">
+        {/* 装飾ぼかし円 */}
+        <div
+          className="absolute -z-10 rounded-full blur-3xl opacity-20 pointer-events-none"
+          style={{ width: 300, height: 300, left: "-6%", top: "20%", backgroundColor: "#3B82C4" }}
+        />
+
+        <div className="max-w-4xl mx-auto relative z-10">
           <p
             className="text-center text-xs font-semibold uppercase tracking-widest mb-2"
             style={{ color: "#3B82C4" }}
@@ -263,7 +299,7 @@ export default function LandingPage() {
           <h2 className="text-2xl font-bold text-center text-[#1E3A5F] mb-2">
             ご利用の流れ
           </h2>
-          <p className="text-center text-[#64748B] text-sm mb-14">最短4ステップで研修開始</p>
+          <p className="text-center text-[#64748B] text-sm mb-12">最短4ステップで研修開始</p>
 
           <div className="grid grid-cols-1 sm:grid-cols-4 gap-8 relative">
             {/* connector line (desktop only) */}
@@ -272,8 +308,12 @@ export default function LandingPage() {
               style={{ backgroundColor: "#3B82C4", opacity: 0.25 }}
             />
 
-            {STEPS.map(({ step, icon, title, desc }) => (
-              <div key={step} className="flex flex-col items-center text-center relative">
+            {STEPS.map(({ step, icon, title, desc }, index) => (
+              <ScrollReveal
+                key={step}
+                className="flex flex-col items-center text-center relative"
+                delayMs={index * 100}
+              >
                 <div className="relative mb-4">
                   <div className="w-16 h-16 bg-[#F1F5F9] rounded-2xl flex items-center justify-center text-2xl border-2 border-[#3B82C4]/20">
                     {icon}
@@ -284,15 +324,14 @@ export default function LandingPage() {
                 </div>
                 <h3 className="font-bold text-[#1E3A5F] text-sm mb-2">{title}</h3>
                 <p className="text-[#64748B] text-xs leading-relaxed">{desc}</p>
-              </div>
+              </ScrollReveal>
             ))}
           </div>
 
           <div className="text-center mt-14">
             <Link
               href="/instructors"
-              className="inline-block px-10 py-4 text-white font-bold rounded-xl text-base shadow-md transition-colors hover:opacity-90"
-              style={{ backgroundColor: "#1E3A5F" }}
+              className="inline-block px-10 py-4 text-white font-bold rounded-xl text-base shadow-md transition-colors hover:opacity-90 bg-gradient-to-r from-[#1E3A5F] to-[#3B82C4]"
             >
               さっそく講師を探す →
             </Link>

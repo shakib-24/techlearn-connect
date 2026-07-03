@@ -1,9 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import type { Instructor } from "@/data/instructors";
 import { useAuth } from "@/hooks/useAuth";
 import { useFavorites } from "@/hooks/useFavorites";
+import { useToast } from "@/hooks/useToast";
 import { CATEGORY_BADGE } from "@/lib/categoryStyles";
 import AuthNav from "@/components/AuthNav";
 import ContactForm from "@/components/ContactForm";
@@ -14,7 +16,9 @@ import ReviewSection from "@/components/ReviewSection";
 export default function DetailContent({ instructor }: { instructor: Instructor }) {
   const { isFavorited, toggleFavorite } = useFavorites();
   const { isLoggedIn } = useAuth();
+  const { showToast } = useToast();
   const favorited = isFavorited(instructor.id);
+  const [justToggled, setJustToggled] = useState(false);
 
   return (
     <div className="min-h-screen bg-[#F1F5F9]">
@@ -28,7 +32,7 @@ export default function DetailContent({ instructor }: { instructor: Instructor }
             ← 一覧に戻る
           </Link>
           <div className="flex flex-wrap items-center justify-end gap-x-4 gap-y-2">
-            <span className="font-semibold text-sm">TechLearn Connect</span>
+            <span className="font-bold text-sm">TechLearn Connect</span>
             <AuthNav theme="dark" />
           </div>
         </div>
@@ -55,14 +59,26 @@ export default function DetailContent({ instructor }: { instructor: Instructor }
 
             {/* お気に入りボタン */}
             <button
-              onClick={() => toggleFavorite(instructor.id)}
+              onClick={() => {
+                toggleFavorite(instructor.id);
+                setJustToggled(false);
+                requestAnimationFrame(() => setJustToggled(true));
+                showToast(
+                  favorited ? "お気に入りを解除しました" : "お気に入りに追加しました"
+                );
+              }}
               className={`flex-shrink-0 flex flex-col items-center gap-1 px-4 py-3 rounded-xl border-2 transition-colors ${
                 favorited
                   ? "border-red-300 bg-red-50 text-red-600"
                   : "border-gray-200 bg-white text-gray-400 hover:border-red-300 hover:text-red-500"
               }`}
             >
-              <span className="text-2xl">{favorited ? "♥" : "♡"}</span>
+              <span
+                className={`text-2xl inline-block ${justToggled ? "animate-bounce-scale" : ""}`}
+                onAnimationEnd={() => setJustToggled(false)}
+              >
+                {favorited ? "♥" : "♡"}
+              </span>
               <span className="text-xs font-medium whitespace-nowrap">
                 {favorited ? "お気に入り済み" : "お気に入り"}
               </span>

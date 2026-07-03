@@ -4,9 +4,6 @@ import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 
-const DEMO_EMAIL = "demo@techlearn.jp";
-const DEMO_PASSWORD = "demo1234";
-
 interface FormValues {
   email: string;
   password: string;
@@ -42,6 +39,7 @@ export default function LoginForm() {
   const [values, setValues] = useState<FormValues>(EMPTY);
   const [errors, setErrors] = useState<FormErrors>({});
   const [authError, setAuthError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -52,7 +50,7 @@ export default function LoginForm() {
     if (authError) setAuthError("");
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const errs = validate(values);
     if (Object.keys(errs).length > 0) {
@@ -60,12 +58,15 @@ export default function LoginForm() {
       return;
     }
 
-    if (values.email.trim() !== DEMO_EMAIL || values.password !== DEMO_PASSWORD) {
-      setAuthError("メールアドレスまたはパスワードが正しくありません");
+    setSubmitting(true);
+    const { error } = await login(values.email.trim(), values.password);
+    setSubmitting(false);
+
+    if (error) {
+      setAuthError(error);
       return;
     }
 
-    login({ name: "デモユーザー", email: DEMO_EMAIL });
     const redirect = searchParams.get("redirect") || "/";
     router.push(redirect);
   };
@@ -91,7 +92,7 @@ export default function LoginForm() {
           name="email"
           value={values.email}
           onChange={handleChange}
-          placeholder="demo@techlearn.jp"
+          placeholder="you@example.com"
           className={fieldClass(!!errors.email)}
         />
         {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
@@ -107,7 +108,7 @@ export default function LoginForm() {
           name="password"
           value={values.password}
           onChange={handleChange}
-          placeholder="demo1234"
+          placeholder="パスワード"
           className={fieldClass(!!errors.password)}
         />
         {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
@@ -115,10 +116,11 @@ export default function LoginForm() {
 
       <button
         type="submit"
-        className="w-full py-3 text-white font-bold rounded-xl text-sm transition-colors"
+        disabled={submitting}
+        className="w-full py-3 text-white font-bold rounded-xl text-sm transition-colors disabled:opacity-60"
         style={{ backgroundColor: "#1E3A5F" }}
       >
-        ログイン
+        {submitting ? "ログイン中..." : "ログイン"}
       </button>
     </form>
   );

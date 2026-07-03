@@ -1,12 +1,25 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { instructors } from "@/data/instructors";
+import type { Instructor } from "@/data/instructors";
+import { createClient } from "@/lib/supabase";
 import DetailContent from "./DetailContent";
 import CustomDetailWrapper from "./CustomDetailWrapper";
 
-// Pre-generate the 7 static instructor paths; custom-* are rendered on demand
-export function generateStaticParams() {
-  return instructors.map((i) => ({ id: i.id }));
+export const dynamic = "force-dynamic";
+
+async function fetchInstructor(id: string): Promise<Instructor | null> {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from("instructors")
+    .select("*")
+    .eq("id", id)
+    .maybeSingle();
+
+  if (error) {
+    console.error("Failed to fetch instructor:", error.message);
+    return null;
+  }
+  return data as Instructor | null;
 }
 
 export async function generateMetadata({
@@ -17,7 +30,7 @@ export async function generateMetadata({
   if (params.id.startsWith("custom-")) {
     return { title: "講師プロフィール" };
   }
-  const instructor = instructors.find((i) => i.id === params.id);
+  const instructor = await fetchInstructor(params.id);
   if (!instructor) return { title: "講師が見つかりません" };
   return {
     title: instructor.name,
@@ -25,7 +38,7 @@ export async function generateMetadata({
   };
 }
 
-export default function InstructorDetailPage({
+export default async function InstructorDetailPage({
   params,
 }: {
   params: { id: string };
@@ -35,7 +48,7 @@ export default function InstructorDetailPage({
     return <CustomDetailWrapper id={params.id} />;
   }
 
-  const instructor = instructors.find((i) => i.id === params.id);
+  const instructor = await fetchInstructor(params.id);
   if (!instructor) notFound();
   return <DetailContent instructor={instructor} />;
 }
