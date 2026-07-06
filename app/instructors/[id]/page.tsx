@@ -1,14 +1,13 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import type { Instructor } from "@/data/instructors";
-import { createClient } from "@/lib/supabase";
+import { supabase } from "@/lib/supabase";
 import DetailContent from "./DetailContent";
 import CustomDetailWrapper from "./CustomDetailWrapper";
 
 export const dynamic = "force-dynamic";
 
 async function fetchInstructor(id: string): Promise<Instructor | null> {
-  const supabase = createClient();
   const { data, error } = await supabase
     .from("instructors")
     .select("*")

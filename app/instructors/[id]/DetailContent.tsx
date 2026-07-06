@@ -163,10 +163,7 @@ function DetailSections({ instructor }: { instructor: Instructor }) {
       </div>
 
       {/* 受講者の声 */}
-      <ReviewSection
-        instructorId={instructor.id}
-        staticReviews={instructor.reviews ?? []}
-      />
+      <ReviewSection instructorId={instructor.id} />
 
       {/* お問い合わせフォーム */}
       <ContactForm instructorName={instructor.name} />

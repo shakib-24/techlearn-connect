@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import AuthNav from "@/components/AuthNav";
 import InstructorList from "@/components/InstructorList";
-import { createClient } from "@/lib/supabase";
+import { supabase } from "@/lib/supabase";
 import type { Instructor } from "@/data/instructors";
 
 export const metadata: Metadata = {
@@ -14,7 +14,6 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function InstructorsPage() {
-  const supabase = createClient();
   const { data, error } = await supabase
     .from("instructors")
     .select("*")

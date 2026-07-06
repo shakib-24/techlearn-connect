@@ -5,11 +5,10 @@ import {
   useCallback,
   useContext,
   useEffect,
-  useMemo,
   useState,
 } from "react";
 import type { User } from "@supabase/supabase-js";
-import { createClient } from "@/lib/supabase";
+import { supabase } from "@/lib/supabase";
 
 function mapAuthError(message: string): string {
   if (message.includes("Invalid login credentials")) {
@@ -26,6 +25,9 @@ function mapAuthError(message: string): string {
   }
   if (message.includes("Unable to validate email address")) {
     return "有効なメールアドレスを入力してください";
+  }
+  if (message.includes("email rate limit exceeded")) {
+    return "確認メールの送信回数が上限に達しました。しばらく時間を置いてから再度お試しください";
   }
   return "エラーが発生しました。時間をおいて再度お試しください";
 }
@@ -46,7 +48,6 @@ interface AuthContextValue {
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const supabase = useMemo(() => createClient(), []);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -63,34 +64,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     );
 
     return () => subscription.subscription.unsubscribe();
-  }, [supabase]);
+  }, []);
 
-  const login = useCallback(
-    async (email: string, password: string) => {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      return { error: error ? mapAuthError(error.message) : null };
-    },
-    [supabase]
-  );
+  const login = useCallback(async (email: string, password: string) => {
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    return { error: error ? mapAuthError(error.message) : null };
+  }, []);
 
-  const signup = useCallback(
-    async (email: string, password: string, name: string) => {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: { data: { name } },
-      });
-      if (error) {
-        return { error: mapAuthError(error.message), needsEmailConfirmation: false };
-      }
-      return { error: null, needsEmailConfirmation: data.session === null };
-    },
-    [supabase]
-  );
+  const signup = useCallback(async (email: string, password: string, name: string) => {
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: { data: { name } },
+    });
+    if (error) {
+      return { error: mapAuthError(error.message), needsEmailConfirmation: false };
+    }
+    return { error: null, needsEmailConfirmation: data.session === null };
+  }, []);
 
   const logout = useCallback(async () => {
     await supabase.auth.signOut();
-  }, [supabase]);
+  }, []);
 
   return (
     <AuthContext.Provider

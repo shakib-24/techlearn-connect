@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import type { Review } from "@/data/instructors";
 import { useAuth } from "@/hooks/useAuth";
 import { useReviews } from "@/hooks/useReviews";
 import LoginRequiredNotice from "@/components/LoginRequiredNotice";
@@ -69,15 +68,15 @@ function validate(v: FormValues): FormErrors {
 
 export default function ReviewSection({
   instructorId,
-  staticReviews,
 }: {
   instructorId: string;
-  staticReviews: Review[];
 }) {
-  const { reviews, addReview } = useReviews(instructorId, staticReviews);
+  const { reviews, addReview } = useReviews(instructorId);
   const { isLoggedIn } = useAuth();
   const [values, setValues] = useState<FormValues>(EMPTY);
   const [errors, setErrors] = useState<FormErrors>({});
+  const [submitError, setSubmitError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [expanded, setExpanded] = useState(false);
 
@@ -90,23 +89,28 @@ export default function ReviewSection({
       ? Math.round((reviews.reduce((s, r) => s + r.rating, 0) / reviews.length) * 10) / 10
       : 0;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const errs = validate(values);
     if (Object.keys(errs).length > 0) {
       setErrors(errs);
       return;
     }
-    const now = new Date();
-    const date = `${now.getFullYear()}年${now.getMonth() + 1}月`;
-    const review: Review = {
-      id: `user-${Date.now()}`,
+
+    setSubmitting(true);
+    setSubmitError("");
+    const { error } = await addReview({
       reviewerType: values.reviewerType,
       rating: values.rating,
       comment: values.comment.trim(),
-      date,
-    };
-    addReview(review);
+    });
+    setSubmitting(false);
+
+    if (error) {
+      setSubmitError("レビューの投稿に失敗しました。時間をおいて再度お試しください");
+      return;
+    }
+
     setValues(EMPTY);
     setErrors({});
     setSubmitted(true);
@@ -177,6 +181,11 @@ export default function ReviewSection({
             {submitted && (
               <div className="mb-4 px-4 py-3 bg-emerald-50 border border-emerald-200 rounded-lg text-emerald-700 text-sm font-medium">
                 ✓ レビューを投稿しました。ありがとうございます！
+              </div>
+            )}
+            {submitError && (
+              <div className="mb-4 px-4 py-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm font-medium">
+                {submitError}
               </div>
             )}
 
@@ -262,10 +271,11 @@ export default function ReviewSection({
 
               <button
                 type="submit"
-                className="w-full py-3 text-white font-bold rounded-xl text-sm transition-opacity hover:opacity-90"
+                disabled={submitting}
+                className="w-full py-3 text-white font-bold rounded-xl text-sm transition-opacity hover:opacity-90 disabled:opacity-60"
                 style={{ backgroundColor: "#1E3A5F" }}
               >
-                レビューを投稿する
+                {submitting ? "投稿中..." : "レビューを投稿する"}
               </button>
             </form>
           </>
