@@ -6,7 +6,10 @@ import InstructorAvatar from "@/components/InstructorAvatar";
 import LPHeader from "@/components/LPHeader";
 import ScrollReveal from "@/components/ScrollReveal";
 import TrustBadges from "@/components/TrustBadges";
-import { instructors } from "@/data/instructors";
+import { supabase } from "@/lib/supabase";
+import type { Instructor } from "@/data/instructors";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "TechLearn Connect | 研修講師マッチングサービス",
@@ -16,30 +19,10 @@ export const metadata: Metadata = {
 
 const STEPS = [
   { step: 1, icon: "🔍", title: "条件を入力", desc: "カテゴリ・対応形式・予算などの希望条件を指定してください" },
-  { step: 2, icon: "📋", title: "講師を比較", desc: "スキルや実績・カリキュラムを見比べてお気に入りに追加" },
+  { step: 2, icon: "📋", title: "講師を選ぶ", desc: "スキルや実績・カリキュラムを見比べてお気に入りに追加" },
   { step: 3, icon: "💬", title: "相談・調整", desc: "気になる講師へ直接コンタクトして日程・内容を調整" },
   { step: 4, icon: "🚀", title: "研修スタート", desc: "合意が取れたらいよいよ研修開始。効果的な学びを提供" },
 ];
-
-// トラストバッジ用の集計値。既存データから動的に算出し、実データと矛盾しないようにする。
-const INSTRUCTOR_COUNT = instructors.length;
-const CATEGORY_COUNT = new Set(instructors.map((i) => i.category)).size;
-const ALL_REVIEWS = instructors.flatMap((i) => i.reviews ?? []);
-const AVG_RATING =
-  ALL_REVIEWS.length > 0
-    ? Math.round((ALL_REVIEWS.reduce((sum, r) => sum + r.rating, 0) / ALL_REVIEWS.length) * 10) / 10
-    : 0;
-
-// ヒーローの「今週のピックアップ講師」用。実データからレビュー平均が最も高い講師を算出。
-const avgRatingOf = (i: (typeof instructors)[number]) =>
-  i.reviews && i.reviews.length > 0
-    ? i.reviews.reduce((sum, r) => sum + r.rating, 0) / i.reviews.length
-    : 0;
-const PICKUP_INSTRUCTOR = instructors.reduce((best, inst) =>
-  avgRatingOf(inst) > avgRatingOf(best) ? inst : best
-);
-const PICKUP_RATING = Math.round(avgRatingOf(PICKUP_INSTRUCTOR) * 10) / 10;
-const PICKUP_REVIEW_COUNT = PICKUP_INSTRUCTOR.reviews?.length ?? 0;
 
 const QUICK_NAV = [
   { href: "/#service", label: "なぜ選ばれるのか" },
@@ -47,7 +30,56 @@ const QUICK_NAV = [
   { href: "/#faq", label: "よくある質問" },
 ];
 
-export default function LandingPage() {
+interface ReviewRatingRow {
+  instructor_id: string;
+  rating: number;
+}
+
+export default async function LandingPage() {
+  const [{ data: instructorRows, error: instructorsError }, { data: reviewRows, error: reviewsError }] =
+    await Promise.all([
+      supabase.from("instructors").select("*").order("created_at", { ascending: true }),
+      supabase.from("reviews").select("instructor_id, rating"),
+    ]);
+
+  if (instructorsError) {
+    console.error("Failed to fetch instructors:", instructorsError.message);
+  }
+  if (reviewsError) {
+    console.error("Failed to fetch reviews:", reviewsError.message);
+  }
+
+  const instructors = (instructorRows ?? []) as Instructor[];
+  const reviews = (reviewRows ?? []) as ReviewRatingRow[];
+
+  // トラストバッジ用の集計値。Supabaseの実データから動的に算出する。
+  const INSTRUCTOR_COUNT = instructors.length;
+  const CATEGORY_COUNT = new Set(instructors.map((i) => i.category)).size;
+  const AVG_RATING =
+    reviews.length > 0
+      ? Math.round((reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length) * 10) / 10
+      : 0;
+
+  // ヒーローの「今週のピックアップ講師」用。講師ごとのレビュー平均が最も高い講師を算出。
+  const ratingsByInstructor = new Map<string, number[]>();
+  for (const r of reviews) {
+    const list = ratingsByInstructor.get(r.instructor_id) ?? [];
+    list.push(r.rating);
+    ratingsByInstructor.set(r.instructor_id, list);
+  }
+  const avgRatingOf = (id: string) => {
+    const ratings = ratingsByInstructor.get(id);
+    return ratings && ratings.length > 0 ? ratings.reduce((sum, r) => sum + r, 0) / ratings.length : 0;
+  };
+  const PICKUP_INSTRUCTOR =
+    instructors.length > 0
+      ? instructors.reduce((best, inst) => (avgRatingOf(inst.id) > avgRatingOf(best.id) ? inst : best))
+      : null;
+  const PICKUP_RATING = PICKUP_INSTRUCTOR ? Math.round(avgRatingOf(PICKUP_INSTRUCTOR.id) * 10) / 10 : 0;
+  const PICKUP_REVIEW_COUNT = PICKUP_INSTRUCTOR
+    ? ratingsByInstructor.get(PICKUP_INSTRUCTOR.id)?.length ?? 0
+    : 0;
+
   return (
     <div className="min-h-screen bg-white">
       {/* ─── Header ─── */}
@@ -119,31 +151,33 @@ export default function LandingPage() {
             </div>
 
             {/* 今週のピックアップ講師（グラスモーフィズムカード） */}
-            <div className="hidden sm:block absolute right-6 lg:right-16 bottom-10 w-64 backdrop-blur-md bg-white/70 border border-white/20 rounded-2xl shadow-lg p-5">
-              <div className="flex items-center gap-1.5 mb-3">
-                <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: "#10B981" }} />
-                <p className="text-[10px] font-semibold uppercase tracking-widest text-[#1E3A5F]">
-                  今週のピックアップ講師
-                </p>
-              </div>
-              <div className="flex items-center gap-3">
-                <InstructorAvatar instructor={PICKUP_INSTRUCTOR} size={44} textSizeClass="text-sm" />
-                <div className="min-w-0">
-                  <p className="font-bold text-[#1E3A5F] text-sm truncate">
-                    {PICKUP_INSTRUCTOR.name}
+            {PICKUP_INSTRUCTOR && (
+              <div className="hidden sm:block absolute right-6 lg:right-16 bottom-10 w-64 backdrop-blur-md bg-white/70 border border-white/20 rounded-2xl shadow-lg p-5">
+                <div className="flex items-center gap-1.5 mb-3">
+                  <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: "#10B981" }} />
+                  <p className="text-[10px] font-semibold uppercase tracking-widest text-[#1E3A5F]">
+                    今週のピックアップ講師
                   </p>
-                  <p className="text-[#64748B] text-xs truncate">{PICKUP_INSTRUCTOR.category}</p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <InstructorAvatar instructor={PICKUP_INSTRUCTOR} size={44} textSizeClass="text-sm" />
+                  <div className="min-w-0">
+                    <p className="font-bold text-[#1E3A5F] text-sm truncate">
+                      {PICKUP_INSTRUCTOR.name}
+                    </p>
+                    <p className="text-[#64748B] text-xs truncate">{PICKUP_INSTRUCTOR.category}</p>
+                  </div>
+                </div>
+                <div className="flex items-baseline gap-1 mt-3">
+                  <span className="text-sm font-bold" style={{ color: "#1E3A5F" }}>
+                    ★ {PICKUP_RATING.toFixed(1)}
+                  </span>
+                  <span className="text-[#64748B] text-xs">
+                    （{PICKUP_REVIEW_COUNT}件のレビュー）
+                  </span>
                 </div>
               </div>
-              <div className="flex items-baseline gap-1 mt-3">
-                <span className="text-sm font-bold" style={{ color: "#1E3A5F" }}>
-                  ★ {PICKUP_RATING.toFixed(1)}
-                </span>
-                <span className="text-[#64748B] text-xs">
-                  （{PICKUP_REVIEW_COUNT}件のレビュー）
-                </span>
-              </div>
-            </div>
+            )}
           </div>
         </div>
       </section>
