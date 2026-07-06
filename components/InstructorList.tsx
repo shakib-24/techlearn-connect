@@ -1,7 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { Instructor } from "@/data/instructors";
+import { useAuth } from "@/hooks/useAuth";
 import { useFavorites } from "@/hooks/useFavorites";
 import { useCustomInstructors } from "@/hooks/useCustomInstructors";
 import InstructorCard from "./InstructorCard";
@@ -18,12 +19,18 @@ const CATEGORIES: Instructor["category"][] = [
 const FORMATS: Instructor["format"][] = ["オンライン", "対面", "両方対応"];
 
 export default function InstructorList({ instructors }: { instructors: Instructor[] }) {
+  const { isLoggedIn } = useAuth();
   const { favorites } = useFavorites();
   const { customInstructors } = useCustomInstructors();
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<Instructor["category"] | "">("");
   const [format, setFormat] = useState<Instructor["format"] | "">("");
   const [favoritesOnly, setFavoritesOnly] = useState(false);
+
+  // 未ログインになったら「お気に入りのみ」フィルタは解除する
+  useEffect(() => {
+    if (!isLoggedIn) setFavoritesOnly(false);
+  }, [isLoggedIn]);
 
   // Merge fetched + custom instructors (custom appear after fetched)
   const allInstructors = useMemo(
@@ -155,18 +162,20 @@ export default function InstructorList({ instructors }: { instructors: Instructo
             })}
           </div>
 
-          {/* お気に入りトグル */}
-          <button
-            onClick={() => setFavoritesOnly(!favoritesOnly)}
-            className={`ml-auto flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors ${
-              favoritesOnly
-                ? "bg-red-50 text-red-600 border-red-300"
-                : "bg-white text-[#64748B] border-gray-200 hover:border-red-300 hover:text-red-500"
-            }`}
-          >
-            <span>{favoritesOnly ? "♥" : "♡"}</span>
-            <span>お気に入りのみ</span>
-          </button>
+          {/* お気に入りトグル（未ログイン時は無効化） */}
+          {isLoggedIn && (
+            <button
+              onClick={() => setFavoritesOnly(!favoritesOnly)}
+              className={`ml-auto flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors ${
+                favoritesOnly
+                  ? "bg-red-50 text-red-600 border-red-300"
+                  : "bg-white text-[#64748B] border-gray-200 hover:border-red-300 hover:text-red-500"
+              }`}
+            >
+              <span>{favoritesOnly ? "♥" : "♡"}</span>
+              <span>お気に入りのみ</span>
+            </button>
+          )}
         </div>
       </div>
 

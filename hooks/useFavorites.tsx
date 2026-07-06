@@ -7,12 +7,18 @@ import {
   useEffect,
   useState,
 } from "react";
-import { getFavorites, saveFavorites } from "@/lib/favorites";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/lib/supabase";
+
+interface ToggleFavoriteResult {
+  error: string | null;
+  requiresLogin: boolean;
+}
 
 interface FavoritesContextValue {
   favorites: string[];
   isFavorited: (id: string) => boolean;
-  toggleFavorite: (id: string) => void;
+  toggleFavorite: (id: string) => Promise<ToggleFavoriteResult>;
 }
 
 const FavoritesContext = createContext<FavoritesContextValue | null>(null);
@@ -22,22 +28,62 @@ export function FavoritesProvider({
 }: {
   children: React.ReactNode;
 }) {
-  // 初期値は空配列 — マウント後に localStorage から読み込む（hydration mismatch 対策）
+  const { user } = useAuth();
   const [favorites, setFavorites] = useState<string[]>([]);
 
   useEffect(() => {
-    setFavorites(getFavorites());
-  }, []);
+    if (!user) {
+      setFavorites([]);
+      return;
+    }
 
-  const toggleFavorite = useCallback((id: string) => {
-    setFavorites((prev) => {
-      const next = prev.includes(id)
-        ? prev.filter((fid) => fid !== id)
-        : [...prev, id];
-      saveFavorites(next);
-      return next;
-    });
-  }, []);
+    supabase
+      .from("favorites")
+      .select("instructor_id")
+      .eq("user_id", user.id)
+      .then(({ data, error }) => {
+        if (error) {
+          console.error("Failed to fetch favorites:", error.message);
+          return;
+        }
+        setFavorites((data ?? []).map((row) => row.instructor_id as string));
+      });
+  }, [user]);
+
+  const toggleFavorite = useCallback(
+    async (id: string): Promise<ToggleFavoriteResult> => {
+      if (!user) {
+        return { error: null, requiresLogin: true };
+      }
+
+      if (favorites.includes(id)) {
+        const { error } = await supabase
+          .from("favorites")
+          .delete()
+          .eq("user_id", user.id)
+          .eq("instructor_id", id);
+
+        if (error) {
+          console.error("Failed to remove favorite:", error.message);
+          return { error: error.message, requiresLogin: false };
+        }
+        setFavorites((prev) => prev.filter((fid) => fid !== id));
+        return { error: null, requiresLogin: false };
+      }
+
+      const { error } = await supabase
+        .from("favorites")
+        .insert({ user_id: user.id, instructor_id: id });
+
+      if (error) {
+        console.error("Failed to add favorite:", error.message);
+        return { error: error.message, requiresLogin: false };
+      }
+      setFavorites((prev) => [...prev, id]);
+      return { error: null, requiresLogin: false };
+    },
+    [user, favorites]
+  );
 
   const isFavorited = useCallback(
     (id: string) => favorites.includes(id),

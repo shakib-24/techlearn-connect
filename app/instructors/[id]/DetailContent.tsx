@@ -59,8 +59,16 @@ export default function DetailContent({ instructor }: { instructor: Instructor }
 
             {/* お気に入りボタン */}
             <button
-              onClick={() => {
-                toggleFavorite(instructor.id);
+              onClick={async () => {
+                const result = await toggleFavorite(instructor.id);
+                if (result.requiresLogin) {
+                  showToast("お気に入りを使うにはログインが必要です");
+                  return;
+                }
+                if (result.error) {
+                  showToast("お気に入りの更新に失敗しました");
+                  return;
+                }
                 setJustToggled(false);
                 requestAnimationFrame(() => setJustToggled(true));
                 showToast(
