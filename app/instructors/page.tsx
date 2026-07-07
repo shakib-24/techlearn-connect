@@ -7,8 +7,7 @@ import type { Instructor } from "@/data/instructors";
 
 export const metadata: Metadata = {
   title: "講師を探す",
-  description:
-    "フロントエンド・Backend・Infrastructure・UI/UX Design・AI/Data Scienceなど5カテゴリのプロ講師を検索・比較。オンライン・対面・両方対応から選択可能。",
+  description: "カテゴリ・対応形式・スキルで絞り込んで、最適なIT研修講師を見つけましょう。",
 };
 
 export const dynamic = "force-dynamic";

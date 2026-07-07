@@ -14,7 +14,15 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "TechLearn Connect | 研修講師マッチングサービス",
   description:
-    "最適な研修講師がすぐ見つかる。IT研修に特化したプロ講師マッチングサービス。フロントエンド・Backend・AI/MLなど5カテゴリ対応。",
+    "日本語・英語・やさしい日本語に対応。初心者から即戦力まで、企業の研修も個人のスキルアップも支える講師マッチングサービス。",
+  openGraph: {
+    title: "TechLearn Connect | 研修講師マッチングサービス",
+    description: "実践力を育てる講師を、必要なときに。",
+    url: "https://techlearn-connect.vercel.app",
+    siteName: "TechLearn Connect",
+    locale: "ja_JP",
+    type: "website",
+  },
 };
 
 const STEPS = [

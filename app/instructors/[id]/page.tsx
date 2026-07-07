@@ -32,8 +32,8 @@ export async function generateMetadata({
   const instructor = await fetchInstructor(params.id);
   if (!instructor) return { title: "講師が見つかりません" };
   return {
-    title: instructor.name,
-    description: `${instructor.tagline}。専門分野: ${instructor.category}。対応形式: ${instructor.format}。${instructor.price}`,
+    title: `${instructor.name} | ${instructor.category}講師`,
+    description: instructor.tagline,
   };
 }
 

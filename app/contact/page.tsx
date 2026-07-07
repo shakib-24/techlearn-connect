@@ -4,8 +4,7 @@ import ContactPageForm from "@/components/ContactPageForm";
 
 export const metadata: Metadata = {
   title: "お問い合わせ",
-  description:
-    "TechLearn Connect運営へのお問い合わせはこちら。講師登録、企業でのご利用、料金についてなどお気軽にご連絡ください。",
+  description: "TechLearn Connectへのお問い合わせはこちらから。",
 };
 
 export default function ContactPage() {
