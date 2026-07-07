@@ -61,6 +61,12 @@ export default function LPHeader() {
           >
             FAQ
           </Link>
+          <Link
+            href="/contact"
+            className="text-sm font-medium text-[#64748B] hover:text-[#1E3A5F] transition-colors"
+          >
+            お問い合わせ
+          </Link>
           <AuthNav theme="light" />
           <Link
             href="/register"
@@ -126,6 +132,13 @@ export default function LPHeader() {
               className="text-sm font-medium text-[#1E3A5F] hover:text-[#3B82C4] transition-colors py-2 border-b border-gray-50"
             >
               FAQ
+            </Link>
+            <Link
+              href="/contact"
+              onClick={() => setOpen(false)}
+              className="text-sm font-medium text-[#1E3A5F] hover:text-[#3B82C4] transition-colors py-2 border-b border-gray-50"
+            >
+              お問い合わせ
             </Link>
             <AuthNav theme="light" stacked onNavigate={() => setOpen(false)} />
             <Link

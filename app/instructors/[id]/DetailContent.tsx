@@ -41,7 +41,7 @@ export default function DetailContent({ instructor }: { instructor: Instructor }
       <main className="max-w-3xl mx-auto px-4 py-8">
         {/* プロフィールヘッダー */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
-          <div className="flex items-start justify-between gap-4">
+          <div className="flex items-start justify-between flex-wrap gap-4">
             <div className="flex items-start gap-5">
               <InstructorAvatar instructor={instructor} size={64} textSizeClass="text-xl" />
               <div>

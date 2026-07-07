@@ -391,10 +391,10 @@ export default async function LandingPage() {
               <Link href="/register" className="hover:text-white transition-colors">
                 講師登録
               </Link>
-              <Link href="#" className="hover:text-white transition-colors">
+              <Link href="/privacy" className="hover:text-white transition-colors">
                 プライバシーポリシー
               </Link>
-              <Link href="#" className="hover:text-white transition-colors">
+              <Link href="/terms" className="hover:text-white transition-colors">
                 利用規約
               </Link>
             </nav>
